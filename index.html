@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Taman Wisata Mata Air Ciburial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <style>
+        :root {
+            --bg: #0a1428;
+            --primary: #1a3d2e;
+            --accent: #00ff9d;
+            --text: #e0f7fa;
+            --card: rgba(26, 61, 46, 0.6);
+            --glow: 0 0 20px rgba(0, 255, 157, 0.5);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+        a { text-decoration: none; color: inherit; }
+
+        /* NAV */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            background: rgba(10, 20, 40, 0.7);
+            transition: 0.3s;
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-shadow: var(--glow);
+        }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        .nav-links a {
+            font-weight: 500;
+            position: relative;
+            transition: 0.3s;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px; left: 0;
+            width: 0; height: 2px;
+            background: var(--accent);
+            transition: 0.3s;
+        }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links a:hover { color: var(--accent); text-shadow: var(--glow); }
+
+        /* HERO WITH VIDEO */
+        .hero {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        /* VIDEO BACKGROUND */
+        .hero-video {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        #/* OVERLAY */
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(rgba(10,20,40,0.85), rgba(10,20,40,0.95));
+            z-index: 2;#
+        }
+
+        .hero-content {
+            z-index: 3;
+            max-width: 900px;
+            padding: 2rem;
+        }
+        .hero h1 {
+            font-size: 4.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 30px rgba(0,255,157,0.7);
+            animation: glow 2s infinite alternate;
+        }
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            font-weight: 600;
+            border-radius: 50px;
+            transition: 0.4s;
+            box-shadow: var(--glow);
+        }
+        .btn:hover {
+            background: var(--accent);
+            color: var(--bg);
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px rgba(0,255,157,0.8);
+        }
+
+        /* SECTION */
+        section {
+            padding: 100px 5%;
+            position: relative;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 2.8rem;
+            margin-bottom: 3rem;
+            color: var(--accent);
+            text-shadow: var(--glow);
+        }
+
+        /* ABOUT, WAHANA, GALLERY, TIKET, LOKASI, CONTACT → SAMA */
+        .about { background: var(--primary); clip-path: polygon(0 5%, 100% 0, 100% 95%, 0 100%); padding: 150px 5%; }
+        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+        .wahana-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+        .card { background: var(--card); border-radius: 20px; overflow: hidden; backdrop-filter: blur(10px); border: 1px solid rgba(0,255,157,0.2); transition: 0.4s; box-shadow: var(--glow); }
+        .card:hover { transform: translateY(-15px); box-shadow: 0 0 40px rgba(0,255,157,0.6); }
+        .swiper { width: 100%; padding: 2rem 0; }
+        .swiper-slide { border-radius: 15px; overflow: hidden; box-shadow: var(--glow); }
+        .swiper-slide img { width: 100%; height: 400px; object-fit: cover; }
+        table { width: 100%; max-width: 800px; margin: 0 auto; border-collapse: collapse; background: var(--card); border-radius: 15px; overflow: hidden; box-shadow: var(--glow); }
+        th, td { padding: 1.2rem; text-align: left; border-bottom: 1px solid rgba(0,255,157,0.2); }
+        th { background: rgba(0,255,157,0.2); color: var(--accent); font-weight: 600; }
+        .map-container { height: 500px; border-radius: 20px; overflow: hidden; box-shadow: var(--glow); margin-top: 2rem; }
+        iframe { width: 100%; height: 100%; border: 0; }
+        .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; text-align: center; }
+
+        footer {
+            text-align: center;
+            padding: 3rem;
+            background: var(--primary);
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(0,255,157,0.5); }
+            to { text-shadow: 0 0 40px rgba(0,255,157,0.9); }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3rem; }
+            .about-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+            nav { justify-content: center; }
+        }
+		
+		/* === DNA STYLE - WAHANA SECTION === */
+.dna-filter-tabs {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    padding: 0 1rem;
+}
+
+.dna-tab {
+    background: rgba(26, 61, 46, 0.8);
+    border: 2px solid transparent;
+    color: var(--text);
+    padding: 0.8rem 1.8rem;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 15px rgba(0, 255, 157, 0.2);
+    font-size: 0.95rem;
+}
+
+.dna-tab:hover, .dna-tab.active {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+    box-shadow: 0 0 25px rgba(0, 255, 157, 0.6);
+    transform: translateY(-3px);
+}
+
+.dna-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.dna-card {
+    perspective: 1000px;
+    height: 380px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--glow);
+    transition: transform 0.4s ease;
+}
+
+.dna-card:hover {
+    transform: translateY(-10px) scale(1.02);
+}
+
+.dna-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    transform-style: preserve-3d;
+}
+
+.dna-card:hover .dna-card-inner {
+    transform: rotateY(180deg);
+}
+
+.dna-card-front, .dna-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.dna-card-front {
+    transform: rotateY(0deg);
+}
+
+.dna-card-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(135deg, rgba(26, 61, 46, 0.95), rgba(10, 20, 40, 0.95));
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: var(--text);
+    backdrop-filter: blur(10px);
+}
+
+.dna-card-front img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+.dna-card:hover .dna-card-front img {
+    transform: scale(1.1);
+}
+
+.dna-card-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    padding: 2rem 1.5rem 1.5rem;
+    color: white;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.4s ease;
+}
+
+.dna-card:hover .dna-card-overlay {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.dna-card-overlay h3 {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 15px rgba(0,255,157,0.8);
+}
+
+.dna-card-overlay p {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.dna-card-back h3 {
+    color: var(--accent);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.dna-card-back p {
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    text-align: center;
+}
+
+.dna-card-back ul {
+    list-style: none;
+    text-align: center;
+}
+
+.dna-card-back ul li {
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+    color: #a8f5d6;
+}
+
+.dna-card-back ul li::before {
+    content: "✓ ";
+    color: var(--accent);
+    font-weight: bold;
+}
+
+/* Responsif */
+@media (max-width: 768px) {
+    .dna-card-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    .dna-tab {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.85rem;
+    }
+    .dna-card {
+        height: 340px;
+    }
+}
+
+/* === CUSTOM CURSOR + LEAF TRAIL === */
+}
+
+.leaf-cursor {
+    position: fixed;
+    width: 28px;
+    height: 28px;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease;
+}
+
+.leaf-cursor svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 8px rgba(0, 255, 157, 0.6));
+    animation: float 3s infinite ease-in-out;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-5px) rotate(5deg); }
+}
+
+/* Trail Partikel Daun Kecil */
+.leaf-trail {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+    animation: trailAnim 1.2s ease-out forwards;
+}
+
+.leaf-trail svg {
+    width: 100%;
+    height: 100%;
+    fill: #00ff9d;
+    filter: drop-shadow(0 0 6px rgba(0, 255, 157, 0.8));
+}
+
+@keyframes trailAnim {
+    0% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) scale(0.3) rotate(0deg);
+    }
+    50% {
+        opacity: 0.6;
+        transform: translate(-50%, -50%) scale(1) rotate(15deg);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8) rotate(30deg) translateY(-30px);
+    }
+}
+
+/* Efek hover interaktif pada elemen */
+a, button, .btn, .dna-tab, .card, .swiper-slide {
+    cursor: none !important;
+}
+
+a:hover, button:hover, .btn:hover, .dna-tab:hover, .card:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+}
+    </style>
+</head>
+<body>
+
+    <!-- NAV -->
+    <nav>
+        <div class="logo">Mata Air Ciburial</div>
+        <div class="nav-links">
+            <a href="#home">Beranda</a>
+            <a href="#about">Tentang</a>
+            <a href="#wahana">Wahana</a>
+            <a href="#gallery">Galeri</a>
+            <a href="#tiket">Tiket</a>
+            <a href="#lokasi">Lokasi</a>
+            <a href="#contact">Reservasi</a>
+        </div>
+    </nav>
+
+    <!-- HERO WITH VIDEO -->
+    <section id="home" class="hero">
+        <!-- VIDEO BACKGROUND -->
+        <video class="hero-video" autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1506905925346-5006b887c7c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80">
+            <source src="High Quality Stock Video Footage - Motion Array.mp4" type="video/mp4">
+            <!-- Fallback jika video gagal -->
+            Your browser does not support video.
+        </video>
+
+        <!-- CONTENT -->
+        <div class="hero-content" data-aos="fade-up">
+            <h1>Taman Wisata Mata Air Ciburial</h1>
+            <p>Dikelilingi oleh hamparan hijau perkebunan teh dan panorama Gunung Gede Pangrango, mata air ini memiliki air yang jernih dan segar</p>
+            <a href="#wahana" class="btn">Mulai Petualangan</a>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="about">
+        <div class="about-grid">
+            <div class="about-text" data-aos="fade-right">
+                <h2 class="section-title">Wisata Alam Terbuka</h2>
+                <p>Selain Mata Air Ciburial, Camping Ground Puncak Bogor juga menawarkan berbagai fasilitas dan aktivitas outdoor.</p>
+                <p>Fasilitas: Mulai dari area camping, glamping, campervan, trek offroad, Arena Paintball, hingga panahan. Tempat ini cocok untuk event seperti gathering, konser musik, dan camping. Fasilitas umum yang tersedia seperti front office, restoran, kafe, mushola, kamar mandi, toilet, parkir motor dan minibus, serta Wi-Fi, semua telah disiapkan untuk kenyamanan pengunjung.</p>
+            </div>
+            <div class="about-img" data-aos="fade-left">
+                <img src="https://images.unsplash.com/photo-1519904981064-b0cf38dc0ac8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Mata Air Ciburial"/>
+            </div>
+        </div>
+    </section>
+
+    <!-- WAHANA -->
+    <section id="wahana" style="padding: 100px 5%; background: var(--primary);">
+    <h2 class="section-title" data-aos="fade-up" style="margin-bottom: 2rem;">Wahana & Aktivitas</h2>
+
+    <!-- FILTER TABS -->
+    <div class="dna-filter-tabs" data-aos="fade-up" data-aos-delay="100">
+        <button class="dna-tab active" data-filter="all">Semua</button>
+        <button class="dna-tab" data-filter="camping">Camping</button>
+        <button class="dna-tab" data-filter="glamping">Glamping</button>
+        <button class="dna-tab" data-filter="gathering">Gathering</button>
+        <button class="dna-tab" data-filter="outdoor">Outdoor</button>
+    </div>
+
+    <!-- CARD GRID -->
+    <div class="dna-card-grid">
+        <!-- CARD 1 -->
+        <div class="dna-card" data-category="camping" data-aos="fade-up" data-aos-delay="200">
+            <div class="dna-card-inner">
+                <div class="dna-card-front">
+                    <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Camping">
+                    <div class="dna-card-overlay">
+                        <h3>Camping Alam</h3>
+                        <p>Berkemah di padang rumput luas</p>
+                    </div>
+                </div>
+                <div class="dna-card-back">
+                    <h3>Camping Alam</h3>
+                    <p>Nikmati malam berbintang di tengah alam terbuka. Tersedia area api unggun dan fasilitas lengkap.</p>
+                    <ul>
+                        <li>✅ Free Listrik</li>
+                        <li>✅ Free Berenang</li>
+                        <li>✅ Toilet & MCK</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD 2 -->
+        <div class="dna-card" data-category="glamping" data-aos="fade-up" data-aos-delay="300">
+            <div class="dna-card-inner">
+                <div class="dna-card-front">
+                    <img src="https://images.unsplash.com/photo-1504280390510-d1b21d0c6df5?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Glamping">
+                    <div class="dna-card-overlay">
+                        <h3>Glamping</h3>
+                        <p>Kenyamanan di alam</p>
+                    </div>
+                </div>
+                <div class="dna-card-back">
+                    <h3>Glamping</h3>
+                    <p>Bersama Keluarga Menikmati sejuknya Puncak dan pemandangan gunung.</p>
+                    <ul>
+                        <li>✅ BedCover</li>
+                        <li>✅ Dispenser Air</li>
+						<li>✅ Sarapan Pagi untuk 4 Orang</li>
+                        <li>✅ Private Bathroom</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD 3 -->
+        <div class="dna-card" data-category="gathering" data-aos="fade-up" data-aos-delay="400">
+            <div class="dna-card-inner">
+                <div class="dna-card-front">
+                    <img src="https://images.unsplash.com/photo-1510312305653-8eac4b1b7e64?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Gathering">
+                    <div class="dna-card-overlay">
+                        <h3>Event & Gathering</h3>
+                        <p>Acara perusahaan & komunitas</p>
+                    </div>
+                </div>
+                <div class="dna-card-back">
+                    <h3>Event & Gathering</h3>
+                    <p>Kapasitas hingga 500 orang. Dilengkapi sound system, panggung, dan catering.</p>
+                    <ul>
+                        <li>✅ Panggung & Sound</li>
+                        <li>✅ Area Parkir Luas</li>
+                        <li>✅ Catering Ready</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD 4 -->
+        <div class="dna-card" data-category="outdoor" data-aos="fade-up" data-aos-delay="500">
+            <div class="dna-card-inner">
+                <div class="dna-card-front">
+                    <img src="https://images.unsplash.com/photo-1605283176568-9b0c4a952a1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Paintball">
+                    <div class="dna-card-overlay">
+                        <h3>Shooting Target</h3>
+                        <p>Paint Ball Dan Archery</p>
+                    </div>
+                </div>
+                <div class="dna-card-back">
+                    <h3>Paintball & Archery</h3>
+                    <p>Membidik dan Menembak Target Sasaran.</p>
+                    <ul>
+                        <li>✅ 10 Peluru untuk PaintBall</li>
+                        <li>✅ 12 Anak Panah Untuk Archery</li>
+                        <li>✅ jarak Target 5 - 15 meter</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD 5 -->
+        <div class="dna-card" data-category="outdoor" data-aos="fade-up" data-aos-delay="600">
+            <div class="dna-card-inner">
+                <div class="dna-card-front">
+                    <img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Offroad">
+                    <div class="dna-card-overlay">
+                        <h3>Offroad Track</h3>
+                        <p>Jelajah medan ekstrem (maintenance)</p>
+                    </div>
+                </div>
+                <div class="dna-card-back">
+                    <h3>Offroad Track</h3>
+                    <p>Trek berbatu, tanjakan curam, dan lumpur untuk jeep dan ATV.</p>
+                    <ul>
+                        <li>✅ 5 KM Trek</li>
+                        <li>✅ Jeep 4x4</li>
+                        <li>✅ Guide Profesional</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD 6 -->
+        <div class="dna-card" data-category="camping glamping" data-aos="fade-up" data-aos-delay="700">
+            <div class="dna-card-inner">
+                <div class="dna-card-front">
+                    <img src="https://images.unsplash.com/photo-1508873699372-7aeab60b44a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Campervan">
+                    <div class="dna-card-overlay">
+                        <h3>Campervan Site</h3>
+                        <p>Parkir & tinggal di van</p>
+                    </div>
+                </div>
+                <div class="dna-card-back">
+                    <h3>Campervan Site</h3>
+                    <p>Area khusus campervan dengan listrik, air, dan Wi-Fi.</p>
+                    <ul>
+                        <li>✅ Free Listrik</li>
+                        <li>✅ Free Toilet</li>
+                        <li>✅ Free Berenang</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+		<!-- CARD 7: FLYING FOX -->
+<div class="dna-card" data-category="outdoor" data-aos="fade-up" data-aos-delay="800">
+    <div class="dna-card-inner">
+        <div class="dna-card-front">
+            <img src="https://images.unsplash.com/photo-1621503836985-9e2b3e7b3d0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Flying Fox">
+            <div class="dna-card-overlay">
+                <h3>Flying Fox</h3>
+                <p>Melayang di atas lembah</p>
+            </div>
+        </div>
+        <div class="dna-card-back">
+            <h3>Flying Fox 150m</h3>
+            <p>Melayang di ketinggian 30 meter dengan pemandangan Gunung Gede.</p>
+            <ul>
+                <li>150 meter panjang</li>
+                <li>Helm & harness pro</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- CARD 8: ATV -->
+<div class="dna-card" data-category="outdoor" data-aos="fade-up" data-aos-delay="900">
+    <div class="dna-card-inner">
+        <div class="dna-card-front">
+            <img src="https://images.unsplash.com/photo-1621503836985-9e2b3e7b3d0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="ATV">
+            <div class="dna-card-overlay">
+                <h3>ATV Adventure</h3>
+                <p>Jelajah medan lumpur</p>
+            </div>
+        </div>
+        <div class="dna-card-back">
+            <h3>ATV 4x4</h3>
+            <p>Petualangan offroad melalui Kebun teh.</p>
+            <ul>
+                <li>ATV 125cc</li>
+                <li>Guide & helm</li>
+                <li>Trek 1 km</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- CARD 9: TERAPI IKAN -->
+<div class="dna-card" data-category="relaksasi" data-aos="fade-up" data-aos-delay="1000">
+    <div class="dna-card-inner">
+        <div class="dna-card-front">
+            <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Terapi Ikan">
+            <div class="dna-card-overlay">
+                <h3>Terapi Ikan</h3>
+                <p>Relaksasi alami</p>
+            </div>
+        </div>
+        <div class="dna-card-back">
+            <h3>Fish Spa</h3>
+            <p>Ikan Nilem membersihkan kulit mati secara alami.</p>
+            <ul>
+                <li>30 menit sesi</li>
+                <li>Air jernih mata air</li>
+                <li>Gratis handuk</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- CARD 10: ARCHERY -->
+<div class="dna-card" data-category="outdoor" data-aos="fade-up" data-aos-delay="1100">
+    <div class="dna-card-inner">
+        <div class="dna-card-front">
+            <img src="https://images.unsplash.com/photo-1560272564-7a5e9e0e0b0f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Archery">
+            <div class="dna-card-overlay">
+                <h3>Paint Ball War</h3>
+                <p>Uji simulasi peperangan ketepatan bidik</p>
+            </div>
+        </div>
+        <div class="dna-card-back">
+            <h3>WARGAMZE</h3>
+            <p>Harus Reservasi Seminggu Sebelum Acara.</p>
+            <ul>
+                <li>TipMan Gun</li>
+                <li>30 Peluru</li>
+                <li>Wasit Acara</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- CARD 11: PEMANCINGAN -->
+<div class="dna-card" data-category="relaksasi" data-aos="fade-up" data-aos-delay="1200">
+    <div class="dna-card-inner">
+        <div class="dna-card-front">
+            <img src="https://images.unsplash.com/photo-1506905925346-5006b887c7c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Pemancingan">
+            <div class="dna-card-overlay">
+                <h3>Pemancingan</h3>
+                <p>Santai di tepi Kolam</p>
+            </div>
+        </div>
+        <div class="dna-card-back">
+            <h3>Kolam Pancing</h3>
+            <p>Ikan nila dan Mas siap dipancing.</p>
+            <ul>
+                <li>Joran & umpan gratis</li>
+                <li>Pay per kg</li>
+                <li>Area teduh</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- CARD 12: TRAMPOLINE -->
+<div class="dna-card" data-category="fun" data-aos="fade-up" data-aos-delay="1300">
+    <div class="dna-card-inner">
+        <div class="dna-card-front">
+            <img src="https://images.unsplash.com/photo-1621503836985-9e2b3e7b3d0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Trampoline">
+            <div class="dna-card-overlay">
+                <h3>Trampoline Park</h3>
+                <p>Lompat bebas!</p>
+            </div>
+        </div>
+        <div class="dna-card-back">
+            <h3>Trampoline Raksasa</h3>
+            <p>Lompat setinggi 3 meter dengan jaring pengaman.</p>
+            <ul>
+                <li>10 menit sesi</li>
+                <li>Aman untuk anak</li>
+                <li>Pengawas 24 jam</li>
+            </ul>
+        </div>
+    </div>
+</div>
+    </div>
+</section>
+
+    <!-- GALLERY -->
+    <section id="gallery" style="background:var(--primary);">
+        <h2 class="section-title" data-aos="fade-up">Galeri Keindahan</h2>
+        <div class="swiper" data-aos="fade-up">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Mata Air"/></div>
+                <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1506197061615-13a8c65e5f2c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Pagi"/></div>
+                <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1519905924830-5c2d439c49c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Camping"/></div>
+                <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1504280390510-d1b21d0c6df5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Tenda"/></div>
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </section>
+
+    <!-- TIKET -->
+    <section id="tiket" class="tiket">
+        <h2 class="section-title" data-aos="fade-up">Harga Tiket Masuk</h2>
+        <table data-aos="fade-up">
+            <tr><th>Kategori</th><th>Harga</th></tr>
+            <tr><td>Tiket Masuk Reguler</td><td>Rp 15.000</td></tr>
+            <tr><td>Tiket Masuk Asing</td><td>Rp 25.000</td></tr>
+            <tr><td>Parkir Motor</td><td>Rp 5.000</td></tr>
+            <tr><td>Parkir Mobil</td><td>Rp 10.000</td></tr>
+            <tr><td>Parkir Elf</td><td>Rp 20.000</td></tr>
+            <tr><td>Parkir Bus</td><td>Rp 50.000</td></tr>
+        </table>
+    </section>
+
+    <!-- LOKASI -->
+    <section id="lokasi">
+        <h2 class="section-title" data-aos="fade-up">Lokasi & Peta</h2>
+        <div class="map-container" data-aos="fade-up">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1981.2789914844368!2d106.97313539340013!3d-6.701534677382144!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69b7465f4cf001%3A0xb5ecf3352dd3bb86!2sTaman%20wisata%20mata%20air%20ciburial!5e0!3m2!1sid!2sid!4v1761716323633!5m2!1sid!2sid" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" style="background:var(--primary);">
+        <h2 class="section-title" data-aos="fade-up">Untuk Reservasi Hubungi Kami di :</h2>
+        <div class="contact-grid">
+            <div class="contact-item" data-aos="fade-up" data-aos-delay="100">
+                <p>Alamat</p>
+                <h3>Lokasi</h3>
+                <p>Jl. Raya Puncak No.km. 86, Tugu Sel., Kec. Cisarua, Kabupaten Bogor, Jawa Barat 16750</p>
+            </div>
+            <div class="contact-item" data-aos="fade-up" data-aos-delay="200">
+                <p>Telepon</p>
+                <h3>Telepon</h3>
+                <p>+62 882-2472-8486</p>
+            </div>
+            <div class="contact-item" data-aos="fade-up" data-aos-delay="300">
+                <p>Chat</p>
+                <h3>WhatsApp</h3>
+                <p><a href="https://wa.me/6288224728486" target="_blank">Chat Sekarang</a></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2025 Taman Wisata Mata Air Ciburial. Dibuat dengan cinta untuk pecinta alam.</p>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true });
+
+        const swiper = new Swiper('.swiper', {
+            loop: true,
+            autoplay: { delay: 3000 },
+            pagination: { el: '.swiper-pagination', clickable: true },
+            effect: 'fade',
+            speed: 1000
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href'))?.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Nav background on scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 100) {
+                nav.style.background = 'rgba(10, 20, 40, 0.95)';
+            } else {
+                nav.style.background = 'rgba(10, 20, 40, 0.7)';
+            }
+        });
+
+        // Optional: Pause video on mobile if needed
+        window.addEventListener('load', () => {
+            const video = document.querySelector('.hero-video');
+            if (window.innerWidth < 768) {
+                video.pause();
+            }
+        });
+		
+		// === DNA FILTER SYSTEM ===
+document.querySelectorAll('.dna-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        const filter = tab.getAttribute('data-filter');
+
+        // Update active tab
+        document.querySelectorAll('.dna-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // Filter cards
+        document.querySelectorAll('.dna-card').forEach(card => {
+            const categories = card.getAttribute('data-category').split(' ');
+            if (filter === 'all' || categories.includes(filter)) {
+                card.style.display = 'block';
+                setTimeout(() => card.style.opacity = '1', 50);
+            } else {
+                card.style.opacity = '0';
+                setTimeout(() => card.style.display = 'none', 300);
+            }
+        });
+    });
+});
+
+// Init: show all
+document.querySelector('.dna-tab[data-filter="all"]').click();
+
+// === LEAF CURSOR + TRAIL EFFECT ===
+const cursor = document.querySelector('.leaf-cursor');
+const trails = [];
+let trailIndex = 0;
+const maxTrails = 12;
+
+document.addEventListener('mousemove', (e) => {
+    // Update posisi kursor utama
+    cursor.style.left = `${e.clientX}px`;
+    cursor.style.top = `${e.clientY}px`;
+
+    // Buat trail setiap 80ms
+    if (!cursor.lastTrail || Date.now() - cursor.lastTrail > 80) {
+        cursor.lastTrail = Date.now();
+
+        let trail = trails[trailIndex];
+        if (!trail) {
+            trail = document.createElement('div');
+            trail.className = 'leaf-trail';
+            trail.innerHTML = `
+                <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 1C4.13 1 1 4.13 1 8s3.13 7 7 7 7-3.13 7-7-3.13-7-7-7zm-1 10l-3-3 1.41-1.41L7 9.17l4.59-4.59L13 6l-6 6z" fill="#00ff9d"/>
+                </svg>
+            `;
+            document.body.appendChild(trail);
+            trails[trailIndex] = trail;
+        }
+
+        // Random rotasi & skala kecil
+        const rotate = Math.random() * 60 - 30;
+        const scale = 0.6 + Math.random() * 0.4;
+        trail.style.left = `${e.clientX}px`;
+        trail.style.top = `${e.clientY}px`;
+        trail.style.transform = `translate(-50%, -50%) scale(${scale}) rotate(${rotate}deg)`;
+        trail.style.opacity = '0.8';
+
+        // Reset animasi
+        trail.style.animation = 'none';
+        requestAnimationFrame(() => {
+            trail.style.animation = 'trailAnim 1.2s ease-out forwards';
+        });
+
+        trailIndex = (trailIndex + 1) % maxTrails;
+    }
+});
+
+// Optional: Efek saat hover link
+document.querySelectorAll('a, button, .btn, .dna-tab').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+        cursor.style.transform = 'translate(-50%, -50%) scale(1.4)';
+        cursor.querySelector('svg').style.filter = 'drop-shadow(0 0 15px rgba(0, 255, 157, 1))';
+    });
+    el.addEventListener('mouseleave', () => {
+        cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+        cursor.querySelector('svg').style.filter = 'drop-shadow(0 0 8px rgba(0, 255, 157, 0.6))';
+    });
+});
+    </script>
+	
+
+</body>
+</html>
