@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Wahana dan aktifitas</title>
+
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+<style>
+:root {
+  --bg: #0a1428;
+  --primary: #1a3d2e;
+  --accent: #00ff9d;
+  --text: #e0f7fa;
+  --card: rgba(26, 61, 46, 0.6);
+  --glow: 0 0 20px rgba(0, 255, 157, 0.5);
+}
+
+body {
+  background: radial-gradient(circle at center, var(--bg) 0%, var(--primary) 100%);
+  color: var(--text);
+  overflow: auto; /* allow page scroll on mobile / when embedded */
+  font-family: 'Poppins', sans-serif;
+  height: auto;
+  margin: 0;
+}
+
+canvas {
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 0;
+}
+
+/* Responsive adjustments when loaded inside index or on small screens */
+@media (max-width: 768px) {
+  .w-44 {
+    width: 100% !important;
+    height: auto !important;
+    position: relative !important;
+    border-right: none !important;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .icon { width: 44px !important; height: 44px !important; }
+
+  .flex-1 { order: 2 !important; width: 100% !important; padding: 0.5rem; }
+
+  #infoPanel { order: 3 !important; width: 100% !important; padding: 0.75rem !important; }
+
+  .character-img { position: relative; max-height: 50vh; left: 50%; transform: translate(-50%, 0%) scale(1); top: 0; }
+
+  body, html { height: auto; }
+}
+
+/* glowing gradient text (disesuaikan dengan warna hijau neon alami) */
+.glow {
+  background: linear-gradient(90deg, var(--accent), #9fffe0, var(--text));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: glowMove 6s infinite linear;
+  background-size: 200% 100%;
+}
+
+@keyframes glowMove {
+  0% { background-position: 0 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* fade effect */
+.fade {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: all 0.7s ease;
+}
+.fade.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Character images */
+.character-img {
+  opacity: 0;
+  position: absolute;
+  max-height: 60vh;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(1.02);
+  transition: all 0.8s ease;
+  filter: drop-shadow(0 0 30px rgba(0, 255, 157, 0.3));
+}
+.character-img.active {
+  opacity: 1;
+  z-index: 10;
+  animation: hologram 1s ease;
+}
+@keyframes hologram {
+  0% { filter: brightness(2) hue-rotate(90deg) blur(2px); transform: translate(-50%, -50%) scale(1.05); opacity: 0; }
+  50% { filter: brightness(1.5) hue-rotate(180deg); opacity: 1; }
+  100% { filter: brightness(1) hue-rotate(0deg) blur(0); transform: translate(-50%, -50%) scale(1.02); }
+}
+
+/* character icons */
+.icon {
+  border: 2px solid transparent;
+  transition: all 0.3s;
+  cursor: pointer;
+  opacity: 0.7;
+  border-radius: 10px;
+}
+.icon.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 12px rgba(0, 255, 157, 0.6);
+  opacity: 1;
+}
+.icon:hover {
+  opacity: 1;
+  transform: scale(1.05);
+  box-shadow: var(--glow);
+}
+
+/* Icon list: show 3 items by default and enable snapping/scrolling */
+#iconList {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem; /* matches Tailwind space-y-4 */
+  max-height: 14rem; /* ~3 * 4rem icon height + gaps */
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
+  padding: 0.25rem 0;
+}
+
+#iconList .icon {
+  scroll-snap-align: center;
+  flex: 0 0 auto;
+}
+
+/* hide thin scrollbar on WebKit but keep scroll functionality */
+#iconList::-webkit-scrollbar { width: 8px; }
+#iconList::-webkit-scrollbar-thumb { background: rgba(0,255,157,0.15); border-radius: 6px; }
+</style>
+</head>
+
+<body class="flex h-screen relative">
+<canvas id="stars"></canvas>
+
+<!-- Left Sidebar -->
+<div class="w-44 bg-black/30 border-r border-gray-700 flex flex-col items-center justify-center z-10">
+  <button id="upBtn" class="text-gray-400 hover:text-white mb-3">▲</button>
+  <div id="iconList" class="space-y-4"></div>
+  <button id="downBtn" class="text-gray-400 hover:text-white mt-3">▼</button>
+</div>
+
+<!-- Center Display -->
+<div class="flex-1 relative flex items-center justify-center z-10"></div>
+
+<!-- Right Panel -->
+<div id="infoPanel" class="w-[35%] flex flex-col justify-center pr-12 fade z-10"></div>
+
+<script>
+/* === CHARACTER DATA === */
+const characters = [
+  {
+    name: "Camping",
+    title: "Nikmati malam berbintang di tengah alam terbuka. Tersedia area api unggun dan fasilitas lengkap.",
+    weapon: "Free Listrik",
+    ring: "Free Berenang",
+    type: "Free Toilet & MCK",
+    dmg: "SleepingBag",
+	include: "Matras Kasur",
+    image: "camping.png",
+    icon: "tend.png"
+  },
+  {
+    name: "Glamping",
+    title: "Bersama Keluarga Menikmati sejuknya Puncak dan pemandangan gunung.",
+    weapon: "BedCover",
+    ring: "Dispenser Air",
+    type: "Sarapan Pagi untuk 4 Orang",
+    dmg: "Private Bathroom",
+    image: "glamping.png",
+    icon: "https://i.imgur.com/ACbZ2RH.jpeg"
+  },
+  {
+    name: "ATV",
+    title: "Petualangan offroad melalui Kebun teh.",
+    weapon: "ATV 125cc",
+    ring: "Guide & helm",
+    type: "Trek 1 km",
+	dmg: "-",
+	include: "-",
+    image: "ATV.png",
+    icon: "quad.png"
+  },
+  {
+    name: "FlyingFox",
+    title: "Melayang di ketinggian 30 meter dengan pemandangan Gunung Gede.",
+    weapon: "150 meter panjang",
+    ring: "Helm & harness pro",
+    type: "-",
+    dmg: "-",
+	include: "-",
+    image: "https://i.imgur.com/Xleczdl.jpeg",
+    icon: "https://i.imgur.com/Xleczdl.jpeg"
+  },
+  {
+    name: "FlyingFox",
+    title: "Melayang di ketinggian 30 meter dengan pemandangan Gunung Gede.",
+    weapon: "150 meter panjang",
+    ring: "Helm & harness pro",
+    type: "-",
+    dmg: "-",
+	include: "-",
+    image: "https://i.imgur.com/Xleczdl.jpeg",
+    icon: "https://i.imgur.com/Xleczdl.jpeg"
+  },
+  {
+    name: "FlyingFox",
+    title: "Melayang di ketinggian 30 meter dengan pemandangan Gunung Gede.",
+    weapon: "150 meter panjang",
+    ring: "Helm & harness pro",
+    type: "-",
+    dmg: "-",
+	include: "-",
+    image: "https://i.imgur.com/Xleczdl.jpeg",
+    icon: "https://i.imgur.com/Xleczdl.jpeg"
+  },
+  {
+    name: "FlyingFox",
+    title: "Melayang di ketinggian 30 meter dengan pemandangan Gunung Gede.",
+    weapon: "150 meter panjang",
+    ring: "Helm & harness pro",
+    type: "-",
+    dmg: "-",
+	include: "-",
+    image: "https://i.imgur.com/Xleczdl.jpeg",
+    icon: "https://i.imgur.com/Xleczdl.jpeg"
+  },
+  {
+    name: "FlyingFox",
+    title: "Melayang di ketinggian 30 meter dengan pemandangan Gunung Gede.",
+    weapon: "150 meter panjang",
+    ring: "Helm & harness pro",
+    type: "-",
+    dmg: "-",
+	include: "-",
+    image: "https://i.imgur.com/Xleczdl.jpeg",
+    icon: "https://i.imgur.com/Xleczdl.jpeg"
+  }
+];
+
+const center = document.querySelector('.flex-1');
+const iconList = document.getElementById('iconList');
+const infoPanel = document.getElementById('infoPanel');
+let currentIndex = 0;
+
+/* === RENDER CHARACTERS === */
+function renderCharacters() {
+  iconList.innerHTML = '';
+  characters.forEach((char, i) => {
+    const img = document.createElement('img');
+    img.src = char.icon;
+    img.className = 'icon w-16 h-16 object-cover rounded-md';
+    if (i === currentIndex) img.classList.add('active');
+    img.addEventListener('click', () => switchCharacter(i));
+    iconList.appendChild(img);
+  });
+
+  center.innerHTML = '';
+  characters.forEach((char, i) => {
+    const img = document.createElement('img');
+    img.src = char.image;
+    img.alt = char.name;
+    img.className = 'character-img' + (i === currentIndex ? ' active' : '');
+    center.appendChild(img);
+  });
+
+  renderInfo();
+}
+
+function renderInfo() {
+  const c = characters[currentIndex];
+  infoPanel.classList.remove('show');
+  setTimeout(() => {
+    infoPanel.innerHTML = `
+      <h1 class="text-5xl font-bold glow">${c.name}</h1>
+      <h3 class="text-2xl mt-2 text-gray-300">${c.title}</h3>
+      <div class="mt-6 space-y-1 text-lg text-gray-400">
+        <p><b class="text-white">✅:</b> ${c.weapon}</p>
+        <p><b class="text-white">✅:</b> ${c.ring}</p>
+        <p><b class="text-white">✅:</b> ${c.type}</p>
+        <p><b class="text-white">✅:</b> ${c.dmg}</p>
+		<p><b class="text-white">✅:</b> ${c.include}</p>
+      </div>
+      <div class="mt-8 relative group cursor-pointer w-56">
+        <img src="${c.image}" class="rounded-lg border border-gray-600 shadow-[0_0_25px_rgba(255,100,255,0.4)] transition" />
+        <div class="absolute inset-0 flex items-center justify-center">
+          <div class="bg-white/20 rounded-full p-4 group-hover:bg-white/30 transition">▶</div>
+        </div>
+      </div>
+    `;
+    setTimeout(() => infoPanel.classList.add('show'), 50);
+  }, 300);
+}
+
+function switchCharacter(i) {
+  const imgs = document.querySelectorAll('.character-img');
+  const icons = document.querySelectorAll('.icon');
+  imgs.forEach((img, index) => img.classList.toggle('active', index === i));
+  icons.forEach((icon, index) => icon.classList.toggle('active', index === i));
+  currentIndex = i;
+  renderInfo();
+}
+
+/* === STAR BACKGROUND EFFECT === */
+const canvas = document.getElementById("stars");
+const ctx = canvas.getContext("2d");
+let stars = [];
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  stars = Array.from({ length: 100 }, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    size: Math.random() * 2,
+    speed: Math.random() * 0.5 + 0.2
+  }));
+}
+window.addEventListener("resize", resize);
+resize();
+
+function animateStars() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  stars.forEach(s => {
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(200, 220, 255, ${Math.random()})`;
+    ctx.fill();
+    s.y += s.speed;
+    if (s.y > canvas.height) s.y = 0;
+  });
+  requestAnimationFrame(animateStars);
+}
+animateStars();
+
+renderCharacters();
+
+// Ensure first selected icon is visible (centered) on load
+setTimeout(() => {
+  const icons = document.querySelectorAll('#iconList .icon');
+  if (icons[currentIndex]) icons[currentIndex].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+}, 100);
+
+// Scroll / navigation buttons (Up / Down) — move selection
+const upBtn = document.getElementById('upBtn');
+const downBtn = document.getElementById('downBtn');
+if (upBtn && downBtn) {
+  upBtn.addEventListener('click', () => {
+    const len = characters.length;
+    const nextIndex = (currentIndex - 1 + len) % len;
+    switchCharacter(nextIndex);
+    // ensure the selected icon is visible
+    const icons = document.querySelectorAll('#iconList .icon');
+    if (icons[nextIndex]) icons[nextIndex].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+  });
+
+  downBtn.addEventListener('click', () => {
+    const len = characters.length;
+    const nextIndex = (currentIndex + 1) % len;
+    switchCharacter(nextIndex);
+    const icons = document.querySelectorAll('#iconList .icon');
+    if (icons[nextIndex]) icons[nextIndex].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+  });
+
+  // Also support mouse wheel on iconList to change selection (nice UX)
+  const iconListEl = document.getElementById('iconList');
+  if (iconListEl) {
+    iconListEl.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      if (e.deltaY > 0) {
+        // scroll down -> next
+        downBtn.click();
+      } else if (e.deltaY < 0) {
+        upBtn.click();
+      }
+    }, { passive: false });
+  }
+}
+</script>
+</body>
+</html>

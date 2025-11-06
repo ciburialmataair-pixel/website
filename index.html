@@ -67,7 +67,8 @@
 
         /* HERO WITH VIDEO */
         .hero {
-            height: 100vh;
+            /* reduce hero video size so it's less dominating */
+            height: 70vh;
             position: relative;
             display: flex;
             align-items: center;
@@ -100,7 +101,7 @@
             padding: 2rem;
         }
         .hero h1 {
-            font-size: 4.5rem;
+            font-size: 3.6rem;
             margin-bottom: 1rem;
             text-shadow: 0 0 30px rgba(0,255,157,0.7);
             animation: glow 2s infinite alternate;
@@ -175,6 +176,35 @@
             .about-grid { grid-template-columns: 1fr; }
             .nav-links { display: none; }
             nav { justify-content: center; }
+        }
+
+        /* Mobile adjustments for gallery and other components */
+        @media (max-width: 768px) {
+            .gallery-container { aspect-ratio: auto; height: 60vh; max-width: 100%; padding: 8px; }
+            .gallery-frame::before, .gallery-frame::after { width: 28px; height: 28px; }
+            .gallery-nav { width: 40px; height: 40px; font-size: 1.1rem; }
+            .gallery-prev { left: 8px; }
+            .gallery-next { right: 8px; }
+            .gallery-overlay { padding: 1rem; }
+            .gallery-title { font-size: 1.4rem; }
+            .gallery-desc { font-size: 0.95rem; max-width: 100%; }
+
+            /* make the character embed/card responsive */
+            #character-embed { padding: 0.6rem !important; border-radius: 10px; }
+            #character-embed .flex-1 { width: 100% !important; }
+            /* sidebar (Tailwind .w-44) to full width on mobile */
+            #character-embed .w-44 { width: 100% !important; }
+            /* info panel inside character module */
+            #character-embed #infoPanel { width: 100% !important; padding: 0.5rem 0 !important; }
+        }
+
+        /* Extra small devices */
+        @media (max-width: 420px) {
+            .hero { height: auto; padding: 40px 5% 80px; }
+            .hero h1 { font-size: 2rem; }
+            .gallery-container { height: 50vh; }
+            .gallery-nav { width: 34px; height: 34px; }
+            .gallery-dot { width: 8px; height: 8px; }
         }
 		
 		/* === DNA STYLE - WAHANA SECTION === */
@@ -354,6 +384,157 @@
 }
 
 /* === CUSTOM CURSOR + LEAF TRAIL === */
+
+
+/* === GAMING STYLE GALLERY === */
+.gallery-container {
+    position: relative;
+    width: 100%;
+    max-width: 1100px; /* slightly smaller for a tighter, more attractive frame */
+    margin: 0 auto;
+    aspect-ratio: 16/9;
+    background: var(--bg);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.gallery-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: 1s ease;
+    padding: 12px;
+}
+
+.gallery-slide.active {
+    opacity: 1;
+    z-index: 1;
+}
+
+.gallery-frame {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--glow),
+                inset 0 0 30px rgba(0,255,157,0.3);
+}
+
+.gallery-frame::before,
+.gallery-frame::after {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--accent);
+    z-index: 2;
+}
+
+.gallery-frame::before {
+    top: -2px;
+    left: -2px;
+    border-right: 0;
+    border-bottom: 0;
+}
+
+.gallery-frame::after {
+    bottom: -2px;
+    right: -2px;
+    border-left: 0;
+    border-top: 0;
+}
+
+.gallery-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s ease;
+}
+
+.gallery-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 2rem;
+    background: linear-gradient(transparent, rgba(10,20,40,0.9));
+    color: var(--text);
+    transform: translateY(20%);
+    opacity: 0;
+    transition: 0.5s ease;
+}
+
+.gallery-slide.active .gallery-overlay {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.gallery-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--accent);
+    text-shadow: var(--glow);
+}
+
+.gallery-desc {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    max-width: 600px;
+}
+
+.gallery-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    background: rgba(0,255,157,0.1);
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.3s ease;
+    z-index: 10;
+}
+
+.gallery-nav:hover {
+    background: var(--accent);
+    color: var(--bg);
+    box-shadow: var(--glow);
+}
+
+.gallery-prev { left: 20px; border-radius: 50% 0 0 50%; }
+.gallery-next { right: 20px; border-radius: 0 50% 50% 0; }
+
+.gallery-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+}
+
+.gallery-dot {
+    width: 10px;
+    height: 10px;
+    background: rgba(255,255,255,0.3);
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.gallery-dot.active {
+    background: var(--accent);
+    box-shadow: var(--glow);
 }
 
 .leaf-cursor {
@@ -470,299 +651,108 @@ a:hover, button:hover, .btn:hover, .dna-tab:hover, .card:hover {
         </div>
     </section>
 
-    <!-- WAHANA -->
-    <section id="wahana" style="padding: 100px 5%; background: var(--primary);">
-    <h2 class="section-title" data-aos="fade-up" style="margin-bottom: 2rem;">Wahana & Aktivitas</h2>
+        <!-- WAHANA -->
+        <section id="wahana" style="padding: 100px 5%; background: var(--primary);">
+        <h2 class="section-title" data-aos="fade-up" style="margin-bottom: 2rem;">Wahana & Aktivitas</h2>
 
-    <!-- FILTER TABS -->
-    <div class="dna-filter-tabs" data-aos="fade-up" data-aos-delay="100">
-        <button class="dna-tab active" data-filter="all">Semua</button>
-        <button class="dna-tab" data-filter="camping">Camping</button>
-        <button class="dna-tab" data-filter="glamping">Glamping</button>
-        <button class="dna-tab" data-filter="gathering">Gathering</button>
-        <button class="dna-tab" data-filter="outdoor">Outdoor</button>
-    </div>
-
-    <!-- CARD GRID -->
-    <div class="dna-card-grid">
-        <!-- CARD 1 -->
-        <div class="dna-card" data-category="camping" data-aos="fade-up" data-aos-delay="200">
-            <div class="dna-card-inner">
-                <div class="dna-card-front">
-                    <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Camping">
-                    <div class="dna-card-overlay">
-                        <h3>Camping Alam</h3>
-                        <p>Berkemah di padang rumput luas</p>
-                    </div>
-                </div>
-                <div class="dna-card-back">
-                    <h3>Camping Alam</h3>
-                    <p>Nikmati malam berbintang di tengah alam terbuka. Tersedia area api unggun dan fasilitas lengkap.</p>
-                    <ul>
-                        <li>✅ Free Listrik</li>
-                        <li>✅ Free Berenang</li>
-                        <li>✅ Toilet & MCK</li>
-                    </ul>
-                </div>
-            </div>
+        <!-- Character module will be loaded here from character.html -->
+        <div id="character-embed" class="card" style="padding:1rem; border-radius:12px; max-width:1200px; margin:0 auto;">
+                <p style="text-align:center; padding:2rem; color:var(--text);">Memuat modul karakter…</p>
         </div>
-
-        <!-- CARD 2 -->
-        <div class="dna-card" data-category="glamping" data-aos="fade-up" data-aos-delay="300">
-            <div class="dna-card-inner">
-                <div class="dna-card-front">
-                    <img src="https://images.unsplash.com/photo-1504280390510-d1b21d0c6df5?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Glamping">
-                    <div class="dna-card-overlay">
-                        <h3>Glamping</h3>
-                        <p>Kenyamanan di alam</p>
-                    </div>
-                </div>
-                <div class="dna-card-back">
-                    <h3>Glamping</h3>
-                    <p>Bersama Keluarga Menikmati sejuknya Puncak dan pemandangan gunung.</p>
-                    <ul>
-                        <li>✅ BedCover</li>
-                        <li>✅ Dispenser Air</li>
-						<li>✅ Sarapan Pagi untuk 4 Orang</li>
-                        <li>✅ Private Bathroom</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- CARD 3 -->
-        <div class="dna-card" data-category="gathering" data-aos="fade-up" data-aos-delay="400">
-            <div class="dna-card-inner">
-                <div class="dna-card-front">
-                    <img src="https://images.unsplash.com/photo-1510312305653-8eac4b1b7e64?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Gathering">
-                    <div class="dna-card-overlay">
-                        <h3>Event & Gathering</h3>
-                        <p>Acara perusahaan & komunitas</p>
-                    </div>
-                </div>
-                <div class="dna-card-back">
-                    <h3>Event & Gathering</h3>
-                    <p>Kapasitas hingga 500 orang. Dilengkapi sound system, panggung, dan catering.</p>
-                    <ul>
-                        <li>✅ Panggung & Sound</li>
-                        <li>✅ Area Parkir Luas</li>
-                        <li>✅ Catering Ready</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- CARD 4 -->
-        <div class="dna-card" data-category="outdoor" data-aos="fade-up" data-aos-delay="500">
-            <div class="dna-card-inner">
-                <div class="dna-card-front">
-                    <img src="https://images.unsplash.com/photo-1605283176568-9b0c4a952a1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Paintball">
-                    <div class="dna-card-overlay">
-                        <h3>Shooting Target</h3>
-                        <p>Paint Ball Dan Archery</p>
-                    </div>
-                </div>
-                <div class="dna-card-back">
-                    <h3>Paintball & Archery</h3>
-                    <p>Membidik dan Menembak Target Sasaran.</p>
-                    <ul>
-                        <li>✅ 10 Peluru untuk PaintBall</li>
-                        <li>✅ 12 Anak Panah Untuk Archery</li>
-                        <li>✅ jarak Target 5 - 15 meter</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- CARD 5 -->
-        <div class="dna-card" data-category="outdoor" data-aos="fade-up" data-aos-delay="600">
-            <div class="dna-card-inner">
-                <div class="dna-card-front">
-                    <img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Offroad">
-                    <div class="dna-card-overlay">
-                        <h3>Offroad Track</h3>
-                        <p>Jelajah medan ekstrem (maintenance)</p>
-                    </div>
-                </div>
-                <div class="dna-card-back">
-                    <h3>Offroad Track</h3>
-                    <p>Trek berbatu, tanjakan curam, dan lumpur untuk jeep dan ATV.</p>
-                    <ul>
-                        <li>✅ 5 KM Trek</li>
-                        <li>✅ Jeep 4x4</li>
-                        <li>✅ Guide Profesional</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- CARD 6 -->
-        <div class="dna-card" data-category="camping glamping" data-aos="fade-up" data-aos-delay="700">
-            <div class="dna-card-inner">
-                <div class="dna-card-front">
-                    <img src="https://images.unsplash.com/photo-1508873699372-7aeab60b44a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Campervan">
-                    <div class="dna-card-overlay">
-                        <h3>Campervan Site</h3>
-                        <p>Parkir & tinggal di van</p>
-                    </div>
-                </div>
-                <div class="dna-card-back">
-                    <h3>Campervan Site</h3>
-                    <p>Area khusus campervan dengan listrik, air, dan Wi-Fi.</p>
-                    <ul>
-                        <li>✅ Free Listrik</li>
-                        <li>✅ Free Toilet</li>
-                        <li>✅ Free Berenang</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-		<!-- CARD 7: FLYING FOX -->
-<div class="dna-card" data-category="outdoor" data-aos="fade-up" data-aos-delay="800">
-    <div class="dna-card-inner">
-        <div class="dna-card-front">
-            <img src="https://images.unsplash.com/photo-1621503836985-9e2b3e7b3d0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Flying Fox">
-            <div class="dna-card-overlay">
-                <h3>Flying Fox</h3>
-                <p>Melayang di atas lembah</p>
-            </div>
-        </div>
-        <div class="dna-card-back">
-            <h3>Flying Fox 150m</h3>
-            <p>Melayang di ketinggian 30 meter dengan pemandangan Gunung Gede.</p>
-            <ul>
-                <li>150 meter panjang</li>
-                <li>Helm & harness pro</li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-<!-- CARD 8: ATV -->
-<div class="dna-card" data-category="outdoor" data-aos="fade-up" data-aos-delay="900">
-    <div class="dna-card-inner">
-        <div class="dna-card-front">
-            <img src="https://images.unsplash.com/photo-1621503836985-9e2b3e7b3d0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="ATV">
-            <div class="dna-card-overlay">
-                <h3>ATV Adventure</h3>
-                <p>Jelajah medan lumpur</p>
-            </div>
-        </div>
-        <div class="dna-card-back">
-            <h3>ATV 4x4</h3>
-            <p>Petualangan offroad melalui Kebun teh.</p>
-            <ul>
-                <li>ATV 125cc</li>
-                <li>Guide & helm</li>
-                <li>Trek 1 km</li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-<!-- CARD 9: TERAPI IKAN -->
-<div class="dna-card" data-category="relaksasi" data-aos="fade-up" data-aos-delay="1000">
-    <div class="dna-card-inner">
-        <div class="dna-card-front">
-            <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Terapi Ikan">
-            <div class="dna-card-overlay">
-                <h3>Terapi Ikan</h3>
-                <p>Relaksasi alami</p>
-            </div>
-        </div>
-        <div class="dna-card-back">
-            <h3>Fish Spa</h3>
-            <p>Ikan Nilem membersihkan kulit mati secara alami.</p>
-            <ul>
-                <li>30 menit sesi</li>
-                <li>Air jernih mata air</li>
-                <li>Gratis handuk</li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-<!-- CARD 10: ARCHERY -->
-<div class="dna-card" data-category="outdoor" data-aos="fade-up" data-aos-delay="1100">
-    <div class="dna-card-inner">
-        <div class="dna-card-front">
-            <img src="https://images.unsplash.com/photo-1560272564-7a5e9e0e0b0f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Archery">
-            <div class="dna-card-overlay">
-                <h3>Paint Ball War</h3>
-                <p>Uji simulasi peperangan ketepatan bidik</p>
-            </div>
-        </div>
-        <div class="dna-card-back">
-            <h3>WARGAMZE</h3>
-            <p>Harus Reservasi Seminggu Sebelum Acara.</p>
-            <ul>
-                <li>TipMan Gun</li>
-                <li>30 Peluru</li>
-                <li>Wasit Acara</li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-<!-- CARD 11: PEMANCINGAN -->
-<div class="dna-card" data-category="relaksasi" data-aos="fade-up" data-aos-delay="1200">
-    <div class="dna-card-inner">
-        <div class="dna-card-front">
-            <img src="https://images.unsplash.com/photo-1506905925346-5006b887c7c2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Pemancingan">
-            <div class="dna-card-overlay">
-                <h3>Pemancingan</h3>
-                <p>Santai di tepi Kolam</p>
-            </div>
-        </div>
-        <div class="dna-card-back">
-            <h3>Kolam Pancing</h3>
-            <p>Ikan nila dan Mas siap dipancing.</p>
-            <ul>
-                <li>Joran & umpan gratis</li>
-                <li>Pay per kg</li>
-                <li>Area teduh</li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-<!-- CARD 12: TRAMPOLINE -->
-<div class="dna-card" data-category="fun" data-aos="fade-up" data-aos-delay="1300">
-    <div class="dna-card-inner">
-        <div class="dna-card-front">
-            <img src="https://images.unsplash.com/photo-1621503836985-9e2b3e7b3d0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Trampoline">
-            <div class="dna-card-overlay">
-                <h3>Trampoline Park</h3>
-                <p>Lompat bebas!</p>
-            </div>
-        </div>
-        <div class="dna-card-back">
-            <h3>Trampoline Raksasa</h3>
-            <p>Lompat setinggi 3 meter dengan jaring pengaman.</p>
-            <ul>
-                <li>10 menit sesi</li>
-                <li>Aman untuk anak</li>
-                <li>Pengawas 24 jam</li>
-            </ul>
-        </div>
-    </div>
-</div>
-    </div>
-</section>
 
     <!-- GALLERY -->
     <section id="gallery" style="background:var(--primary);">
         <h2 class="section-title" data-aos="fade-up">Galeri Keindahan</h2>
-        <div class="swiper" data-aos="fade-up">
-            <div class="swiper-wrapper">
-                <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Mata Air"/></div>
-                <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1506197061615-13a8c65e5f2c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Pagi"/></div>
-                <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1519905924830-5c2d439c49c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Camping"/></div>
-                <div class="swiper-slide"><img src="https://images.unsplash.com/photo-1504280390510-d1b21d0c6df5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Tenda"/></div>
+        <div class="gallery-container" data-aos="fade-up">
+            <div class="gallery-slide active">
+                <div class="gallery-frame">
+                    <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" 
+                         alt="Mata Air Ciburial" class="gallery-image">
+                    <div class="gallery-overlay">
+                        <h3 class="gallery-title">Mata Air Alami</h3>
+                        <p class="gallery-desc">Sumber mata air jernih yang mengalir dari pegunungan, menciptakan kesegaran alami yang menyegarkan</p>
+                    </div>
+                </div>
             </div>
-            <div class="swiper-pagination"></div>
+            <div class="gallery-slide">
+                <div class="gallery-frame">
+                    <img src="https://images.unsplash.com/photo-1506197061615-13a8c65e5f2c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" 
+                         alt="Sunrise di Ciburial" class="gallery-image">
+                    <div class="gallery-overlay">
+                        <h3 class="gallery-title">Panorama Pagi</h3>
+                        <p class="gallery-desc">Nikmati keindahan matahari terbit dengan latar belakang pegunungan yang megah</p>
+                    </div>
+                </div>
+            </div>
+            <div class="gallery-slide">
+                <div class="gallery-frame">
+                    <img src="https://images.unsplash.com/photo-1519905924830-5c2d439c49c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" 
+                         alt="Area Camping" class="gallery-image">
+                    <div class="gallery-overlay">
+                        <h3 class="gallery-title">Area Camping</h3>
+                        <p class="gallery-desc">Tempat camping dengan pemandangan alam yang sempurna untuk petualangan outdoor Anda</p>
+                    </div>
+                </div>
+            </div>
+            <div class="gallery-slide">
+                <div class="gallery-frame">
+                    <img src="https://images.unsplash.com/photo-1504280390510-d1b21d0c6df5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" 
+                         alt="Glamping" class="gallery-image">
+                    <div class="gallery-overlay">
+                        <h3 class="gallery-title">Glamping Experience</h3>
+                        <p class="gallery-desc">Fasilitas glamping modern dengan kenyamanan hotel di tengah alam terbuka</p>
+                    </div>
+                </div>
+            </div>
+            <button class="gallery-nav gallery-prev">❮</button>
+            <button class="gallery-nav gallery-next">❯</button>
+            <div class="gallery-dots"></div>
         </div>
     </section>
+    <script>
+        // Gallery Navigation
+        const slides = document.querySelectorAll('.gallery-slide');
+        const prev = document.querySelector('.gallery-prev');
+        const next = document.querySelector('.gallery-next');
+        const dots = document.querySelector('.gallery-dots');
+        let currentSlide = 0;
+
+        // Create dots
+        slides.forEach((_, i) => {
+            const dot = document.createElement('div');
+            dot.className = `gallery-dot ${i === 0 ? 'active' : ''}`;
+            dot.addEventListener('click', () => goToSlide(i));
+            dots.appendChild(dot);
+        });
+
+        function updateSlide(index) {
+            slides.forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.gallery-dot').forEach(d => d.classList.remove('active'));
+            slides[index].classList.add('active');
+            document.querySelectorAll('.gallery-dot')[index].classList.add('active');
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlide(currentSlide);
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            updateSlide(currentSlide);
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            updateSlide(currentSlide);
+        }
+
+        prev.addEventListener('click', prevSlide);
+        next.addEventListener('click', nextSlide);
+
+        // Auto advance slides
+        setInterval(nextSlide, 5000);
+    </script>
 
     <!-- TIKET -->
     <section id="tiket" class="tiket">
@@ -797,13 +787,16 @@ a:hover, button:hover, .btn:hover, .dna-tab:hover, .card:hover {
             </div>
             <div class="contact-item" data-aos="fade-up" data-aos-delay="200">
                 <p>Telepon</p>
-                <h3>Telepon</h3>
-                <p>+62 882-2472-8486</p>
+                <h3>Amar</h3>
+				<p>+62 812-9511-1107</p>
+				<h3>Shinta</h3>
+                <p>+62 819-9929-7101</p>
             </div>
             <div class="contact-item" data-aos="fade-up" data-aos-delay="300">
                 <p>Chat</p>
                 <h3>WhatsApp</h3>
-                <p><a href="https://wa.me/6288224728486" target="_blank">Chat Sekarang</a></p>
+                <p><a href="https://wa.me/6281295111107" target="_blank">Chat Dengan Amar</a></p>
+				<p><a href="https://wa.me/6281999297101" target="_blank">Chat Dengan Shinta</a></p>
             </div>
         </div>
     </section>
@@ -812,7 +805,10 @@ a:hover, button:hover, .btn:hover, .dna-tab:hover, .card:hover {
     <footer>
         <p>&copy; 2025 Taman Wisata Mata Air Ciburial. Dibuat dengan cinta untuk pecinta alam.</p>
     </footer>
-
+	
+	<!-- Tailwind CDN -->
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <!-- SCRIPTS -->
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
@@ -938,6 +934,74 @@ document.querySelectorAll('a, button, .btn, .dna-tab').forEach(el => {
         cursor.querySelector('svg').style.filter = 'drop-shadow(0 0 8px rgba(0, 255, 157, 0.6))';
     });
 });
+    </script>
+    <!-- Loader: fetch and inject character.html into #character-embed -->
+    <script>
+    (function(){
+        const container = document.getElementById('character-embed');
+        if (!container) return;
+
+        fetch('character.html').then(r => {
+            if (!r.ok) throw new Error(`HTTP ${r.status} ${r.statusText}`);
+            return r.text();
+        }).then(html => {
+            // Parse fetched HTML
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+
+            // Move any inline styles from fetched head into current head,
+            // but scope top-level selectors to #character-embed to avoid
+            // overriding the main page (body/html) styles.
+            [...doc.querySelectorAll('head style')].forEach(s => {
+                let css = s.textContent || '';
+                // Basic scoping: replace occurrences of body/html/canvas selectors
+                // with a scoped selector. This is a conservative approach and
+                // works for the character module CSS here.
+                css = css.replace(/(^|[\s,>+~])body([\s,{>+~])/g, '$1#character-embed$2');
+                css = css.replace(/(^|[\s,>+~])html([\s,{>+~])/g, '$1#character-embed$2');
+                css = css.replace(/(^|[\s,>+~])canvas([\s,{>+~])/g, '$1#character-embed canvas$2');
+
+                const st = document.createElement('style');
+                st.textContent = css;
+                document.head.appendChild(st);
+            });
+
+            // Insert body content into container
+            const fetchedBody = doc.body.innerHTML;
+            container.innerHTML = fetchedBody;
+
+            // Execute scripts from fetched HTML in order
+            const scripts = doc.querySelectorAll('script');
+            (async function runScripts(){
+                for (const s of scripts) {
+                    if (s.src) {
+                        // skip if same src already present
+                        if (document.querySelector(`script[src="${s.src}"]`)) continue;
+                        await new Promise((res, rej) => {
+                            const sc = document.createElement('script');
+                            sc.src = s.src;
+                            sc.onload = res; sc.onerror = res;
+                            document.body.appendChild(sc);
+                        });
+                    } else {
+                        // inline script: create and append to execute
+                        const sc = document.createElement('script');
+                        sc.textContent = s.textContent;
+                        document.body.appendChild(sc);
+                    }
+                }
+            })();
+
+        }).catch(err => {
+            console.error('Error loading character.html', err);
+            if (container) {
+                // Show detailed message and fallback to iframe to guarantee isolation
+                container.innerHTML = `
+                    <iframe src="character.html" style="width:100%;height:600px;border:0;border-radius:8px;overflow:hidden;"></iframe>
+                `;
+            }
+        });
+    })();
     </script>
 	
 
