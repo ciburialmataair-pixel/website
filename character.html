@@ -22,7 +22,7 @@
 body {
   background: radial-gradient(circle at center, var(--bg) 0%, var(--primary) 100%);
   color: var(--text);
-  overflow: auto; /* allow page scroll on mobile / when embedded */
+  overflow: auto;
   font-family: 'Poppins', sans-serif;
   height: auto;
   margin: 0;
@@ -34,32 +34,167 @@ canvas {
   z-index: 0;
 }
 
-/* Responsive adjustments when loaded inside index or on small screens */
-@media (max-width: 768px) {
-  .w-44 {
-    width: 100% !important;
-    height: auto !important;
-    position: relative !important;
-    border-right: none !important;
-    display: flex !important;
-    flex-direction: row !important;
-    justify-content: center !important;
-    gap: 0.5rem;
-    padding: 0.5rem 0.75rem;
-  }
-
-  .icon { width: 44px !important; height: 44px !important; }
-
-  .flex-1 { order: 2 !important; width: 100% !important; padding: 0.5rem; }
-
-  #infoPanel { order: 3 !important; width: 100% !important; padding: 0.75rem !important; }
-
-  .character-img { position: relative; max-height: 50vh; left: 50%; transform: translate(-50%, 0%) scale(1); top: 0; }
-
-  body, html { height: auto; }
+/* Mobile First Design */
+.mobile-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  z-index: 10;
 }
 
-/* glowing gradient text (disesuaikan dengan warna hijau neon alami) */
+/* Mobile Header */
+.mobile-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Mobile Icon Carousel */
+.mobile-icon-container {
+  display: flex;
+  overflow-x: auto;
+  padding: 1rem 0;
+  gap: 1rem;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+}
+
+.mobile-icon-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
+.mobile-icon {
+  flex: 0 0 auto;
+  width: 80px;
+  height: 80px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  transition: all 0.3s;
+  cursor: pointer;
+  opacity: 0.7;
+  scroll-snap-align: center;
+  object-fit: cover;
+}
+
+.mobile-icon.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 12px rgba(0, 255, 157, 0.6);
+  opacity: 1;
+}
+
+.mobile-icon:hover {
+  opacity: 1;
+  transform: scale(1.05);
+  box-shadow: var(--glow);
+}
+
+/* Mobile Character Display */
+.mobile-character {
+  position: relative;
+  width: 100%;
+  height: 40vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  margin: 0.5rem;
+}
+
+.character-img {
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: all 0.8s ease;
+  filter: drop-shadow(0 0 30px rgba(0, 255, 157, 0.3));
+  position: absolute;
+}
+
+.character-img.active {
+  opacity: 1;
+  z-index: 10;
+  animation: hologram 1s ease;
+}
+
+@keyframes hologram {
+  0% { filter: brightness(2) hue-rotate(90deg) blur(2px); transform: scale(1.05); opacity: 0; }
+  50% { filter: brightness(1.5) hue-rotate(180deg); opacity: 1; }
+  100% { filter: brightness(1) hue-rotate(0deg) blur(0); transform: scale(1); }
+}
+
+/* Mobile Info Panel */
+.mobile-info {
+  padding: 1.5rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+/* Video Icon Button in Info Panel */
+.info-video-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: rgba(0, 255, 157, 0.2);
+  border: 1px solid var(--accent);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  z-index: 20;
+}
+
+.info-video-btn:hover {
+  background-color: rgba(0, 255, 157, 0.4);
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(0, 255, 157, 0.6);
+}
+
+.info-video-btn svg {
+  width: 24px;
+  height: 24px;
+  fill: var(--text);
+}
+
+/* Mobile Navigation */
+.mobile-nav {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-btn {
+  background-color: rgba(0, 255, 157, 0.2);
+  border: 1px solid var(--accent);
+  color: var(--text);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  min-width: 100px;
+}
+
+.nav-btn:hover {
+  background-color: rgba(0, 255, 157, 0.4);
+  transform: translateY(-2px);
+}
+
+/* glowing gradient text */
 .glow {
   background: linear-gradient(90deg, var(--accent), #9fffe0, var(--text));
   -webkit-background-clip: text;
@@ -76,94 +211,157 @@ canvas {
 /* fade effect */
 .fade {
   opacity: 0;
-  transform: translateX(40px);
+  transform: translateY(20px);
   transition: all 0.7s ease;
 }
 .fade.show {
   opacity: 1;
-  transform: translateX(0);
+  transform: translateY(0);
 }
 
-/* Character images */
-.character-img {
-  opacity: 0;
-  position: absolute;
-  max-height: 60vh;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%) scale(1.02);
-  transition: all 0.8s ease;
-  filter: drop-shadow(0 0 30px rgba(0, 255, 157, 0.3));
-}
-.character-img.active {
-  opacity: 1;
-  z-index: 10;
-  animation: hologram 1s ease;
-}
-@keyframes hologram {
-  0% { filter: brightness(2) hue-rotate(90deg) blur(2px); transform: translate(-50%, -50%) scale(1.05); opacity: 0; }
-  50% { filter: brightness(1.5) hue-rotate(180deg); opacity: 1; }
-  100% { filter: brightness(1) hue-rotate(0deg) blur(0); transform: translate(-50%, -50%) scale(1.02); }
-}
-
-/* character icons */
-.icon {
-  border: 2px solid transparent;
-  transition: all 0.3s;
-  cursor: pointer;
-  opacity: 0.7;
-  border-radius: 10px;
-}
-.icon.active {
-  border-color: var(--accent);
-  box-shadow: 0 0 12px rgba(0, 255, 157, 0.6);
-  opacity: 1;
-}
-.icon:hover {
-  opacity: 1;
-  transform: scale(1.05);
-  box-shadow: var(--glow);
-}
-
-/* Icon list: show 3 items by default and enable snapping/scrolling */
-#iconList {
-  display: flex;
-  flex-direction: column;
+/* Video Modal */
+.video-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 100;
+  justify-content: center;
   align-items: center;
-  gap: 1rem; /* matches Tailwind space-y-4 */
-  max-height: 14rem; /* ~3 * 4rem icon height + gaps */
-  overflow-y: auto;
-  scroll-behavior: smooth;
-  scroll-snap-type: y mandatory;
-  padding: 0.25rem 0;
 }
 
-#iconList .icon {
-  scroll-snap-align: center;
-  flex: 0 0 auto;
+.video-modal.active {
+  display: flex;
 }
 
-/* hide thin scrollbar on WebKit but keep scroll functionality */
-#iconList::-webkit-scrollbar { width: 8px; }
-#iconList::-webkit-scrollbar-thumb { background: rgba(0,255,157,0.15); border-radius: 6px; }
+.video-container {
+  position: relative;
+  width: 90%;
+  max-width: 800px;
+  background-color: #000;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.video-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 101;
+  transition: all 0.3s;
+}
+
+.video-close:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+.video-close svg {
+  width: 20px;
+  height: 20px;
+  fill: white;
+}
+
+/* Desktop styles (keep original for larger screens) */
+@media (min-width: 768px) {
+  .mobile-container {
+    flex-direction: row;
+    height: 100vh;
+  }
+  
+  .mobile-header {
+    display: none;
+  }
+  
+  .mobile-icon-container {
+    flex-direction: column;
+    width: 176px;
+    height: auto;
+    overflow-y: auto;
+    padding: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .mobile-character {
+    height: auto;
+    flex: 1;
+    margin: 1rem;
+  }
+  
+  .mobile-info {
+    width: 35%;
+    border-top: none;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .mobile-nav {
+    display: none;
+  }
+  
+  .character-img {
+    max-width: 90%;
+    max-height: 90%;
+  }
+}
 </style>
 </head>
 
-<body class="flex h-screen relative">
+<body>
 <canvas id="stars"></canvas>
 
-<!-- Left Sidebar -->
-<div class="w-44 bg-black/30 border-r border-gray-700 flex flex-col items-center justify-center z-10">
-  <button id="upBtn" class="text-gray-400 hover:text-white mb-3">▲</button>
-  <div id="iconList" class="space-y-4"></div>
-  <button id="downBtn" class="text-gray-400 hover:text-white mt-3">▼</button>
+<div class="mobile-container">
+  <!-- Mobile Header -->
+  <div class="mobile-header">
+    <h1 class="text-2xl font-bold glow">Wahana dan Aktifitas</h1>
+  </div>
+  
+  <!-- Mobile Icon Carousel -->
+  <div class="mobile-icon-container" id="mobileIconList"></div>
+  
+  <!-- Mobile Character Display -->
+  <div class="mobile-character" id="mobileCharacter"></div>
+  
+  <!-- Mobile Info Panel -->
+  <div class="mobile-info fade" id="mobileInfo">
+    <!-- Video Icon Button in Info Panel -->
+    <div class="info-video-btn" id="infoVideoBtn">
+      <svg viewBox="0 0 24 24">
+        <path d="M8 5v14l11-7z"/>
+      </svg>
+    </div>
+  </div>
+  
+  <!-- Mobile Navigation -->
+  <div class="mobile-nav">
+    <button id="prevBtn" class="nav-btn">◀ Sebelumnya</button>
+    <button id="nextBtn" class="nav-btn">Selanjutnya ▶</button>
+  </div>
 </div>
 
-<!-- Center Display -->
-<div class="flex-1 relative flex items-center justify-center z-10"></div>
-
-<!-- Right Panel -->
-<div id="infoPanel" class="w-[35%] flex flex-col justify-center pr-12 fade z-10"></div>
+<!-- Video Modal -->
+<div class="video-modal" id="videoModal">
+  <div class="video-container">
+    <div class="video-close" id="videoClose">
+      <svg viewBox="0 0 24 24">
+        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+      </svg>
+    </div>
+    <video id="videoPlayer" width="100%" controls>
+      <source src="" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+</div>
 
 <script>
 /* === CHARACTER DATA === */
@@ -175,9 +373,10 @@ const characters = [
     ring: "Free Berenang",
     type: "Free Toilet & MCK",
     dmg: "SleepingBag",
-	include: "Matras Kasur",
+    include: "Matras Kasur",
     image: "camping.png",
-    icon: "tend.png"
+    icon: "tenda.png",
+    video: "camping-video.mp4"
   },
   {
     name: "Glamping",
@@ -186,8 +385,9 @@ const characters = [
     ring: "Dispenser Air",
     type: "Sarapan Pagi untuk 4 Orang",
     dmg: "Private Bathroom",
-    image: "glamping.png",
-    icon: "https://i.imgur.com/ACbZ2RH.jpeg"
+    image: "https://picsum.photos/seed/glamping/800/600.jpg",
+    icon: "https://picsum.photos/seed/glamping-icon/80/80.jpg",
+    video: "glamping-video.mp4"
   },
   {
     name: "ATV",
@@ -195,10 +395,11 @@ const characters = [
     weapon: "ATV 125cc",
     ring: "Guide & helm",
     type: "Trek 1 km",
-	dmg: "-",
-	include: "-",
+    dmg: "-",
+    include: "-",
     image: "ATV.png",
-    icon: "quad.png"
+    icon: "quad.png",
+    video: "atv-video.mp4"
   },
   {
     name: "FlyingFox",
@@ -207,80 +408,99 @@ const characters = [
     ring: "Helm & harness pro",
     type: "-",
     dmg: "-",
-	include: "-",
-    image: "https://i.imgur.com/Xleczdl.jpeg",
-    icon: "https://i.imgur.com/Xleczdl.jpeg"
+    include: "-",
+    image: "https://picsum.photos/seed/flyingfox/800/600.jpg",
+    icon: "https://picsum.photos/seed/flyingfox-icon/80/80.jpg",
+    video: "flyingfox-video.mp4"
   },
   {
-    name: "FlyingFox",
-    title: "Melayang di ketinggian 30 meter dengan pemandangan Gunung Gede.",
-    weapon: "150 meter panjang",
-    ring: "Helm & harness pro",
-    type: "-",
+    name: "High Rope",
+    title: "Tantangan keseimbangan di ketinggian dengan berbagai rintangan.",
+    weapon: "Safety Harness",
+    ring: "Guide Profesional",
+    type: "5 Jalur Berbeda",
     dmg: "-",
-	include: "-",
-    image: "https://i.imgur.com/Xleczdl.jpeg",
-    icon: "https://i.imgur.com/Xleczdl.jpeg"
+    include: "-",
+    image: "https://picsum.photos/seed/highrope/800/600.jpg",
+    icon: "https://picsum.photos/seed/highrope-icon/80/80.jpg",
+    video: "highrope-video.mp4"
   },
   {
-    name: "FlyingFox",
-    title: "Melayang di ketinggian 30 meter dengan pemandangan Gunung Gede.",
-    weapon: "150 meter panjang",
-    ring: "Helm & harness pro",
-    type: "-",
-    dmg: "-",
-	include: "-",
-    image: "https://i.imgur.com/Xleczdl.jpeg",
-    icon: "https://i.imgur.com/Xleczdl.jpeg"
+    name: "Paintball",
+    title: "Permainan tim strategis dengan arena bertema militer.",
+    weapon: "Marker Paintball",
+    ring: "Pelindung Wajah",
+    type: "100 Peluru",
+    dmg: "Seragam Tim",
+    include: "-",
+    image: "https://picsum.photos/seed/paintball/800/600.jpg",
+    icon: "https://picsum.photos/seed/paintball-icon/80/80.jpg",
+    video: "paintball-video.mp4"
   },
   {
-    name: "FlyingFox",
-    title: "Melayang di ketinggian 30 meter dengan pemandangan Gunung Gede.",
-    weapon: "150 meter panjang",
-    ring: "Helm & harness pro",
-    type: "-",
-    dmg: "-",
-	include: "-",
-    image: "https://i.imgur.com/Xleczdl.jpeg",
-    icon: "https://i.imgur.com/Xleczdl.jpeg"
+    name: "Archery",
+    title: "Latihan memanah dengan target berjarak bervariasi.",
+    weapon: "Busur Panah",
+    ring: "Target Standar",
+    type: "20 Anak Panah",
+    dmg: "Pelindung Tangan",
+    include: "Instruktur",
+    image: "https://picsum.photos/seed/archery/800/600.jpg",
+    icon: "https://picsum.photos/seed/archery-icon/80/80.jpg",
+    video: "archery-video.mp4"
   },
   {
-    name: "FlyingFox",
-    title: "Melayang di ketinggian 30 meter dengan pemandangan Gunung Gede.",
-    weapon: "150 meter panjang",
-    ring: "Helm & harness pro",
-    type: "-",
-    dmg: "-",
-	include: "-",
-    image: "https://i.imgur.com/Xleczdl.jpeg",
-    icon: "https://i.imgur.com/Xleczdl.jpeg"
+    name: "Rafting",
+    title: "Arung jeram di sungai dengan tingkat kesulitan menengah.",
+    weapon: "Perahu Karet",
+    ring: "Helm & Pelampung",
+    type: "3km Rute",
+    dmg: "Guide Berpengalaman",
+    include: "Makan Siang",
+    image: "https://picsum.photos/seed/rafting/800/600.jpg",
+    icon: "https://picsum.photos/seed/rafting-icon/80/80.jpg",
+    video: "rafting-video.mp4"
   }
 ];
 
-const center = document.querySelector('.flex-1');
-const iconList = document.getElementById('iconList');
-const infoPanel = document.getElementById('infoPanel');
+const mobileIconList = document.getElementById('mobileIconList');
+const mobileCharacter = document.getElementById('mobileCharacter');
+const mobileInfo = document.getElementById('mobileInfo');
+const infoVideoBtn = document.getElementById('infoVideoBtn');
+const videoModal = document.getElementById('videoModal');
+const videoClose = document.getElementById('videoClose');
+const videoPlayer = document.getElementById('videoPlayer');
 let currentIndex = 0;
 
 /* === RENDER CHARACTERS === */
 function renderCharacters() {
-  iconList.innerHTML = '';
+  // Render icons
+  mobileIconList.innerHTML = '';
   characters.forEach((char, i) => {
     const img = document.createElement('img');
     img.src = char.icon;
-    img.className = 'icon w-16 h-16 object-cover rounded-md';
+    img.className = 'mobile-icon';
     if (i === currentIndex) img.classList.add('active');
     img.addEventListener('click', () => switchCharacter(i));
-    iconList.appendChild(img);
+    img.addEventListener('error', function() {
+      // Fallback if image fails to load
+      this.src = `https://picsum.photos/seed/fallback-${i}/80/80.jpg`;
+    });
+    mobileIconList.appendChild(img);
   });
 
-  center.innerHTML = '';
+  // Render character images
+  mobileCharacter.innerHTML = '';
   characters.forEach((char, i) => {
     const img = document.createElement('img');
     img.src = char.image;
     img.alt = char.name;
     img.className = 'character-img' + (i === currentIndex ? ' active' : '');
-    center.appendChild(img);
+    img.addEventListener('error', function() {
+      // Fallback if image fails to load
+      this.src = `https://picsum.photos/seed/fallback-${i}/800/600.jpg`;
+    });
+    mobileCharacter.appendChild(img);
   });
 
   renderInfo();
@@ -288,36 +508,50 @@ function renderCharacters() {
 
 function renderInfo() {
   const c = characters[currentIndex];
-  infoPanel.classList.remove('show');
+  mobileInfo.classList.remove('show');
   setTimeout(() => {
-    infoPanel.innerHTML = `
-      <h1 class="text-5xl font-bold glow">${c.name}</h1>
-      <h3 class="text-2xl mt-2 text-gray-300">${c.title}</h3>
-      <div class="mt-6 space-y-1 text-lg text-gray-400">
+    mobileInfo.innerHTML = `
+      <!-- Video Icon Button in Info Panel -->
+      <div class="info-video-btn" id="infoVideoBtn">
+        <svg viewBox="0 0 24 24">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+      </div>
+      
+      <h1 class="text-3xl font-bold glow">${c.name}</h1>
+      <h3 class="text-lg mt-2 text-gray-300">${c.title}</h3>
+      <div class="mt-4 space-y-1 text-base text-gray-400">
         <p><b class="text-white">✅:</b> ${c.weapon}</p>
         <p><b class="text-white">✅:</b> ${c.ring}</p>
         <p><b class="text-white">✅:</b> ${c.type}</p>
         <p><b class="text-white">✅:</b> ${c.dmg}</p>
-		<p><b class="text-white">✅:</b> ${c.include}</p>
-      </div>
-      <div class="mt-8 relative group cursor-pointer w-56">
-        <img src="${c.image}" class="rounded-lg border border-gray-600 shadow-[0_0_25px_rgba(255,100,255,0.4)] transition" />
-        <div class="absolute inset-0 flex items-center justify-center">
-          <div class="bg-white/20 rounded-full p-4 group-hover:bg-white/30 transition">▶</div>
-        </div>
+        <p><b class="text-white">✅:</b> ${c.include}</p>
       </div>
     `;
-    setTimeout(() => infoPanel.classList.add('show'), 50);
+    
+    // Re-attach event listener to the new video button
+    const newVideoBtn = document.getElementById('infoVideoBtn');
+    newVideoBtn.addEventListener('click', openVideoModal);
+    
+    setTimeout(() => mobileInfo.classList.add('show'), 50);
   }, 300);
 }
 
 function switchCharacter(i) {
   const imgs = document.querySelectorAll('.character-img');
-  const icons = document.querySelectorAll('.icon');
+  const icons = document.querySelectorAll('.mobile-icon');
   imgs.forEach((img, index) => img.classList.toggle('active', index === i));
   icons.forEach((icon, index) => icon.classList.toggle('active', index === i));
   currentIndex = i;
   renderInfo();
+  
+  // Scroll to the selected icon on mobile
+  if (window.innerWidth < 768) {
+    const selectedIcon = mobileIconList.children[i];
+    if (selectedIcon) {
+      selectedIcon.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+  }
 }
 
 /* === STAR BACKGROUND EFFECT === */
@@ -354,47 +588,88 @@ animateStars();
 
 renderCharacters();
 
-// Ensure first selected icon is visible (centered) on load
-setTimeout(() => {
-  const icons = document.querySelectorAll('#iconList .icon');
-  if (icons[currentIndex]) icons[currentIndex].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
-}, 100);
+// Mobile navigation buttons
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
 
-// Scroll / navigation buttons (Up / Down) — move selection
-const upBtn = document.getElementById('upBtn');
-const downBtn = document.getElementById('downBtn');
-if (upBtn && downBtn) {
-  upBtn.addEventListener('click', () => {
+if (prevBtn) {
+  prevBtn.addEventListener('click', () => {
     const len = characters.length;
-    const nextIndex = (currentIndex - 1 + len) % len;
-    switchCharacter(nextIndex);
-    // ensure the selected icon is visible
-    const icons = document.querySelectorAll('#iconList .icon');
-    if (icons[nextIndex]) icons[nextIndex].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+    const prevIndex = (currentIndex - 1 + len) % len;
+    switchCharacter(prevIndex);
   });
+}
 
-  downBtn.addEventListener('click', () => {
+if (nextBtn) {
+  nextBtn.addEventListener('click', () => {
     const len = characters.length;
     const nextIndex = (currentIndex + 1) % len;
     switchCharacter(nextIndex);
-    const icons = document.querySelectorAll('#iconList .icon');
-    if (icons[nextIndex]) icons[nextIndex].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
   });
+}
 
-  // Also support mouse wheel on iconList to change selection (nice UX)
-  const iconListEl = document.getElementById('iconList');
-  if (iconListEl) {
-    iconListEl.addEventListener('wheel', (e) => {
-      e.preventDefault();
-      if (e.deltaY > 0) {
-        // scroll down -> next
-        downBtn.click();
-      } else if (e.deltaY < 0) {
-        upBtn.click();
-      }
-    }, { passive: false });
+// Touch swipe support for mobile
+let touchStartX = 0;
+let touchEndX = 0;
+
+mobileCharacter.addEventListener('touchstart', (e) => {
+  touchStartX = e.changedTouches[0].screenX;
+});
+
+mobileCharacter.addEventListener('touchend', (e) => {
+  touchEndX = e.changedTouches[0].screenX;
+  handleSwipe();
+});
+
+function handleSwipe() {
+  if (touchEndX < touchStartX - 50) {
+    // Swipe left - next character
+    nextBtn.click();
+  }
+  if (touchEndX > touchStartX + 50) {
+    // Swipe right - previous character
+    prevBtn.click();
   }
 }
+
+// Keyboard navigation support
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowLeft') {
+    prevBtn.click();
+  } else if (e.key === 'ArrowRight') {
+    nextBtn.click();
+  } else if (e.key === 'Escape' && videoModal.classList.contains('active')) {
+    videoModal.classList.remove('active');
+    videoPlayer.pause();
+  }
+});
+
+// Video modal functionality
+function openVideoModal() {
+  const currentCharacter = characters[currentIndex];
+  if (currentCharacter.video) {
+    videoPlayer.src = currentCharacter.video;
+    videoModal.classList.add('active');
+    videoPlayer.play();
+  }
+}
+
+function closeVideoModal() {
+  videoModal.classList.remove('active');
+  videoPlayer.pause();
+  videoPlayer.src = '';
+}
+
+// Video button event listener
+infoVideoBtn.addEventListener('click', openVideoModal);
+videoClose.addEventListener('click', closeVideoModal);
+
+// Close modal when clicking outside the video
+videoModal.addEventListener('click', (e) => {
+  if (e.target === videoModal) {
+    closeVideoModal();
+  }
+});
 </script>
 </body>
 </html>
