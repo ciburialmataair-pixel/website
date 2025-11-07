@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulir Reservasi - Nama Usaha Anda</title>
+    <style>
+        /* --- Gaya Umum --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        /* --- Container Utama --- */
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        /* --- Gaya Form --- */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        input[type="date"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* Penting agar padding tidak mengubah lebar */
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="tel"]:focus,
+        input[type="date"]:focus,
+        input[type="number"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical; /* Memungkinkan mengubah tinggi textarea */
+        }
+
+        /* --- Gaya Tombol --- */
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #229954;
+        }
+
+        /* --- Gaya Bagian QRIS --- */
+        .qris-section {
+            text-align: center;
+            border-top: 2px dashed #bdc3c7;
+            padding-top: 20px;
+            margin-top: 30px;
+        }
+
+        .qris-section h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .qris-section p {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .qris-section img {
+            max-width: 200px;
+            height: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        /* --- Gaya Upload File --- */
+        input[type="file"] {
+            border: 1px dashed #3498db;
+            background-color: #ecf0f1;
+        }
+        
+        /* --- Animasi sederhana untuk munculnya opsi --- */
+        #tentCapacityOptions {
+            display: none; /* Sembunyikan secara default */
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Formulir Reservasi</h1>
+        <!-- Form tidak memerlukan action dan method lagi karena akan di-handle oleh JS -->
+        <form id="reservationForm">
+            
+            <!-- Nama -->
+            <div class="form-group">
+                <label for="nama">Nama Lengkap:</label>
+                <input type="text" id="nama" name="nama" placeholder="Masukkan nama lengkap Anda" required>
+            </div>
+
+            <!-- No Telepon -->
+            <div class="form-group">
+                <label for="notlp">No. Telepon / WhatsApp:</label>
+                <input type="tel" id="notlp" name="notlp" placeholder="Contoh: 08123456789" required>
+            </div>
+
+            <!-- Pilihan Reservasi -->
+            <div class="form-group">
+                <label for="pilihan">Pilihan Reservasi:</label>
+                <select id="pilihan" name="pilihan" required onchange="toggleTentCapacity()">
+                    <option value="">-- Pilih Jenis Reservasi --</option>
+                    <option value="campervan">Campervan</option>
+                    <option value="camping">Camping (Sewa Tenda)</option>
+                    <option value="glamping">Glamping</option>
+                    <option value="acara">Acara</option>
+                </select>
+            </div>
+
+            <!-- Opsi Kapasitas Tenda (Muncul jika Camping dipilih) -->
+            <div id="tentCapacityOptions" class="form-group">
+                <label for="kapasitas">Pilih Kapasitas Tenda:</label>
+                <select id="kapasitas" name="kapasitas">
+                    <option value="3">3 Orang</option>
+                    <option value="6">6 Orang</option>
+                    <option value="8">8 Orang</option>
+                </select>
+            </div>
+
+            <!-- Tanggal Reservasi -->
+            <div class="form-group">
+                <label for="tanggal">Tanggal Reservasi:</label>
+                <input type="date" id="tanggal" name="tanggal" required>
+            </div>
+
+            <!-- Durasi Reservasi -->
+            <div class="form-group">
+                <label for="durasi">Durasi Reservasi (hari):</label>
+                <input type="number" id="durasi" name="durasi" min="1" placeholder="Berapa hari?" required>
+            </div>
+
+            <!-- Keterangan -->
+            <div class="form-group">
+                <label for="keterangan">Keterangan Tambahan:</label>
+                <textarea id="keterangan" name="keterangan" rows="4" placeholder="Tuliskan permintaan khusus atau informasi lainnya..."></textarea>
+            </div>
+
+            <!-- Gambar QRIS -->
+            <div class="qris-section">
+                <h3>Pembayaran via QRIS</h3>
+                <p>Silakan scan kode QR berikut untuk melakukan pembayaran. Simpan bukti pembayaran Anda.</p>
+                <!-- Ganti URL ini dengan gambar QRIS Anda -->
+                <img src="https://i.ibb.co/68v8w8y/qris-placeholder.png" alt="Kode QRIS untuk Pembayaran">
+            </div>
+            
+            <!-- Upload Bukti Pembayaran -->
+            <div class="form-group">
+                <label for="buktiPembayaran">Upload Bukti Pembayaran:</label>
+                <input type="file" id="buktiPembayaran" name="buktiPembayaran" accept="image/png, image/jpeg, image/jpg" required>
+            </div>
+
+            <!-- Tombol Submit -->
+            <div class="form-group">
+                <button type="submit">Kirim Reservasi via WhatsApp</button>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        // Fungsi untuk menampilkan atau menyembunyikan opsi kapasitas tenda
+        function toggleTentCapacity() {
+            const pilihanSelect = document.getElementById('pilihan');
+            const tentCapacityDiv = document.getElementById('tentCapacityOptions');
+            const kapasitasSelect = document.getElementById('kapasitas');
+
+            if (pilihanSelect.value === 'camping') {
+                tentCapacityDiv.style.display = 'block';
+                kapasitasSelect.setAttribute('required', '');
+            } else {
+                tentCapacityDiv.style.display = 'none';
+                kapasitasSelect.removeAttribute('required');
+            }
+        }
+
+        // --- LOGIKA KIRIM KE WHATSAPP ---
+        document.getElementById('reservationForm').addEventListener('submit', function(event) {
+            // Mencegah form dikirim secara default
+            event.preventDefault(); 
+
+            // !!! GANTI DENGAN NOMOR WHATSAPP ANDA !!!
+            // Format: 62 (kode negara) + nomor hp tanpa angka 0 di depan
+            // Contoh: 08123456789 menjadi 628123456789
+            const targetPhoneNumber = '6288224728486'; 
+
+            // Ambil semua nilai dari form
+            const nama = document.getElementById('nama').value;
+            const notlp = document.getElementById('notlp').value;
+            const pilihan = document.getElementById('pilihan').value;
+            const kapasitas = document.getElementById('kapasitas').value;
+            const tanggal = document.getElementById('tanggal').value;
+            const durasi = document.getElementById('durasi').value;
+            const keterangan = document.getElementById('keterangan').value;
+            
+            // Ambil nama file bukti pembayaran (karena file tidak bisa dikirim langsung via URL)
+            const buktiFile = document.getElementById('buktiPembayaran').files[0];
+            const buktiFileName = buktiFile ? buktiFile.name : 'Tidak ada file';
+
+            // Format pesan yang akan dikirim
+            let message = `Halo, saya ingin melakukan reservasi dengan detail berikut:%0A%0A`; // %0A adalah enter/garis baru
+            message += `*Nama Lengkap:* ${nama}%0A`;
+            message += `*No. Telepon/WhatsApp:* ${notlp}%0A`;
+            message += `*Pilihan Reservasi:* ${pilihan.charAt(0).toUpperCase() + pilihan.slice(1)}%0A`;
+            
+            // Tambahkan kapasitas hanya jika pilihannya camping
+            if (pilihan === 'camping') {
+                message += `*Kapasitas Tenda:* ${kapasitas} Orang%0A`;
+            }
+
+            message += `*Tanggal Reservasi:* ${tanggal}%0A`;
+            message += `*Durasi:* ${durasi} hari%0A`;
+            message += `*Keterangan:* ${keterangan || '-'}%0A%0A`; // Tampilkan '-' jika keterangan kosong
+            message += `*Bukti Pembayaran:* ${buktiFileName} (akan dikirimkan pada chat berikutnya)`;
+
+            // Buat URL WhatsApp
+            const whatsappURL = `https://wa.me/${targetPhoneNumber}?text=${message}`;
+
+            // Buka URL WhatsApp di tab baru
+            window.open(whatsappURL, '_blank');
+
+            // Tampilkan pesan konfirmasi kepada pengguna
+            alert('Terima kasih! WhatsApp telah terbuka. Silakan kirim pesan tersebut dan lampirkan bukti pembayaran Anda.');
+        });
+    </script>
+
+</body>
+</html>
