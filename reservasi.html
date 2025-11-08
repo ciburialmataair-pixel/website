@@ -72,10 +72,15 @@
         }
 
         /* --- Gaya Tombol --- */
-        button {
-            width: 100%;
+        .button-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .button-container button {
+            flex: 1;
             padding: 15px;
-            background-color: #27ae60;
             color: white;
             border: none;
             border-radius: 5px;
@@ -85,8 +90,20 @@
             transition: background-color 0.3s;
         }
 
-        button:hover {
+        .button-amar {
+            background-color: #27ae60;
+        }
+
+        .button-amar:hover {
             background-color: #229954;
+        }
+
+        .button-admin {
+            background-color: #3498db;
+        }
+
+        .button-admin:hover {
+            background-color: #2980b9;
         }
 
         /* --- Gaya Bagian QRIS --- */
@@ -115,14 +132,84 @@
             border-radius: 5px;
         }
 
-        /* --- Gaya Upload File --- */
-        input[type="file"] {
-            border: 1px dashed #3498db;
-            background-color: #ecf0f1;
+        /* --- Gaya Harga --- */
+        .price-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #3498db;
         }
-        
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .price-row.total {
+            font-weight: bold;
+            font-size: 18px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .price-row.dp {
+            color: #e74c3c;
+        }
+
+        /* --- Gaya Pilihan Hari --- */
+        .day-options {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .day-option {
+            flex: 1;
+            position: relative;
+        }
+
+        .day-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .day-option label {
+            display: block;
+            padding: 12px;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 0;
+        }
+
+        .day-option input[type="radio"]:checked + label {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .day-option label:hover {
+            border-color: #3498db;
+        }
+
+        .price-tag {
+            font-size: 0.8em;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        .day-option input[type="radio"]:checked + label .price-tag {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
         /* --- Animasi sederhana untuk munculnya opsi --- */
-        #tentCapacityOptions {
+        #tentCapacityOptions,
+        #campervanPeopleOptions {
             display: none; /* Sembunyikan secara default */
             animation: fadeIn 0.5s;
         }
@@ -156,19 +243,45 @@
             <!-- Pilihan Reservasi -->
             <div class="form-group">
                 <label for="pilihan">Pilihan Reservasi:</label>
-                <select id="pilihan" name="pilihan" required onchange="toggleTentCapacity()">
+                <select id="pilihan" name="pilihan" required onchange="toggleOptions(); updateDayOptions(); calculatePrice();">
                     <option value="">-- Pilih Jenis Reservasi --</option>
-                    <option value="campervan">Campervan</option>
+                    <option value="campervan">Campervan/Tenda Sendiri</option>
                     <option value="camping">Camping (Sewa Tenda)</option>
                     <option value="glamping">Glamping</option>
-                    <option value="acara">Acara</option>
                 </select>
+            </div>
+
+            <!-- Pilihan Hari (Weekday/Weekend) -->
+            <div id="dayOptions" class="form-group" style="display: none;">
+                <label>Pilih Hari:</label>
+                <div class="day-options">
+                    <div class="day-option">
+                        <input type="radio" id="weekday" name="dayType" value="weekday" onchange="calculatePrice();">
+                        <label for="weekday">
+                            Weekday
+                            <div class="price-tag" id="weekdayPrice">Rp 0</div>
+                        </label>
+                    </div>
+                    <div class="day-option">
+                        <input type="radio" id="weekend" name="dayType" value="weekend" onchange="calculatePrice();">
+                        <label for="weekend">
+                            Weekend
+                            <div class="price-tag" id="weekendPrice">Rp 0</div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Opsi Jumlah Orang (Muncul jika Campervan/Tenda Sendiri dipilih) -->
+            <div id="campervanPeopleOptions" class="form-group">
+                <label for="jumlahOrang">Jumlah Orang:</label>
+                <input type="number" id="jumlahOrang" name="jumlahOrang" min="1" placeholder="Berapa orang?" onchange="calculatePrice();">
             </div>
 
             <!-- Opsi Kapasitas Tenda (Muncul jika Camping dipilih) -->
             <div id="tentCapacityOptions" class="form-group">
                 <label for="kapasitas">Pilih Kapasitas Tenda:</label>
-                <select id="kapasitas" name="kapasitas">
+                <select id="kapasitas" name="kapasitas" onchange="calculatePrice();">
                     <option value="3">3 Orang</option>
                     <option value="6">6 Orang</option>
                     <option value="8">8 Orang</option>
@@ -178,13 +291,13 @@
             <!-- Tanggal Reservasi -->
             <div class="form-group">
                 <label for="tanggal">Tanggal Reservasi:</label>
-                <input type="date" id="tanggal" name="tanggal" required>
+                <input type="date" id="tanggal" name="tanggal" required onchange="autoSelectDayType();">
             </div>
 
             <!-- Durasi Reservasi -->
             <div class="form-group">
                 <label for="durasi">Durasi Reservasi (hari):</label>
-                <input type="number" id="durasi" name="durasi" min="1" placeholder="Berapa hari?" required>
+                <input type="number" id="durasi" name="durasi" min="1" placeholder="Berapa hari?" required onchange="calculatePrice();">
             </div>
 
             <!-- Keterangan -->
@@ -193,82 +306,242 @@
                 <textarea id="keterangan" name="keterangan" rows="4" placeholder="Tuliskan permintaan khusus atau informasi lainnya..."></textarea>
             </div>
 
+            <!-- Perhitungan Harga -->
+            <div class="price-section">
+                <h3>Detail Harga</h3>
+                <div class="price-row">
+                    <span>Tipe Hari:</span>
+                    <span id="tipeHari">-</span>
+                </div>
+                <div class="price-row">
+                    <span>Harga per hari:</span>
+                    <span id="hargaPerHari">Rp 0</span>
+                </div>
+                <div class="price-row">
+                    <span>Durasi:</span>
+                    <span id="durasiHarga">0 hari</span>
+                </div>
+                <div class="price-row total">
+                    <span>Total Harga:</span>
+                    <span id="totalHarga">Rp 0</span>
+                </div>
+                <div class="price-row dp">
+                    <span>DP (20%):</span>
+                    <span id="dpHarga">Rp 0</span>
+                </div>
+            </div>
+
             <!-- Gambar QRIS -->
             <div class="qris-section">
-                <h3>Pembayaran via QRIS</h3>
-                <p>Silakan scan kode QR berikut untuk melakukan pembayaran. Simpan bukti pembayaran Anda.</p>
+                <h3>Pembayaran DP via QRIS</h3>
+                <p>Silakan scan kode QR berikut untuk melakukan pembayaran DP (20% dari total). Sisanya dapat dibayar saat tiba di lokasi.</p>
                 <!-- Ganti URL ini dengan gambar QRIS Anda -->
-                <img src="https://i.ibb.co/68v8w8y/qris-placeholder.png" alt="Kode QRIS untuk Pembayaran">
-            </div>
-            
-            <!-- Upload Bukti Pembayaran -->
-            <div class="form-group">
-                <label for="buktiPembayaran">Upload Bukti Pembayaran:</label>
-                <input type="file" id="buktiPembayaran" name="buktiPembayaran" accept="image/png, image/jpeg, image/jpg" required>
+                <img src="QRIS.jpg" alt="Kode QRIS untuk Pembayaran">
+                <p>Cantumkan Bukti screenshoot pembayaran setelah memasuki whatsapp Admin</p>
             </div>
 
             <!-- Tombol Submit -->
             <div class="form-group">
-                <button type="submit">Kirim Reservasi via WhatsApp</button>
+                <div class="button-container">
+                    <button type="button" id="submitToAmar" class="button-amar">Kirim Reservasi ke Admin Amar</button>
+                    <button type="button" id="submitToAdmin" class="button-admin">Kirim Reservasi ke Admin Shinta</button>
+                </div>
             </div>
 
         </form>
     </div>
 
     <script>
-        // Fungsi untuk menampilkan atau menyembunyikan opsi kapasitas tenda
-        function toggleTentCapacity() {
+        // Harga untuk setiap jenis reservasi per hari (weekday dan weekend)
+        const hargaPerHari = {
+            campervan: {
+                weekday: 55000,
+                weekend: 65000
+            },
+            camping: {
+                weekday: {
+                    3: 300000,
+                    6: 550000,
+                    8: 750000
+                },
+                weekend: {
+                    3: 350000,
+                    6: 600000,
+                    8: 800000
+                }
+            },
+            glamping: {
+                weekday: 750000,
+                weekend: 850000
+            }
+        };
+
+        // Fungsi untuk menampilkan atau menyembunyikan opsi tambahan
+        function toggleOptions() {
             const pilihanSelect = document.getElementById('pilihan');
             const tentCapacityDiv = document.getElementById('tentCapacityOptions');
+            const campervanPeopleDiv = document.getElementById('campervanPeopleOptions');
+            const dayOptionsDiv = document.getElementById('dayOptions');
             const kapasitasSelect = document.getElementById('kapasitas');
+            const jumlahOrangInput = document.getElementById('jumlahOrang');
+
+            // Reset semua opsi
+            tentCapacityDiv.style.display = 'none';
+            campervanPeopleDiv.style.display = 'none';
+            dayOptionsDiv.style.display = 'none';
+            kapasitasSelect.removeAttribute('required');
+            jumlahOrangInput.removeAttribute('required');
 
             if (pilihanSelect.value === 'camping') {
                 tentCapacityDiv.style.display = 'block';
                 kapasitasSelect.setAttribute('required', '');
-            } else {
-                tentCapacityDiv.style.display = 'none';
-                kapasitasSelect.removeAttribute('required');
+                dayOptionsDiv.style.display = 'block';
+            } else if (pilihanSelect.value === 'campervan') {
+                campervanPeopleDiv.style.display = 'block';
+                jumlahOrangInput.setAttribute('required', '');
+                dayOptionsDiv.style.display = 'block';
+            } else if (pilihanSelect.value === 'glamping') {
+                dayOptionsDiv.style.display = 'block';
             }
         }
 
-        // --- LOGIKA KIRIM KE WHATSAPP ---
-        document.getElementById('reservationForm').addEventListener('submit', function(event) {
-            // Mencegah form dikirim secara default
-            event.preventDefault(); 
+        // Fungsi untuk memperbarui opsi hari berdasarkan pilihan reservasi
+        function updateDayOptions() {
+            const pilihan = document.getElementById('pilihan').value;
+            const kapasitas = document.getElementById('kapasitas').value;
+            const jumlahOrang = parseInt(document.getElementById('jumlahOrang').value) || 0;
+            
+            let weekdayPrice = 0;
+            let weekendPrice = 0;
+            
+            if (pilihan === 'campervan') {
+                weekdayPrice = hargaPerHari.campervan.weekday * jumlahOrang;
+                weekendPrice = hargaPerHari.campervan.weekend * jumlahOrang;
+            } else if (pilihan === 'camping') {
+                weekdayPrice = hargaPerHari.camping.weekday[kapasitas];
+                weekendPrice = hargaPerHari.camping.weekend[kapasitas];
+            } else if (pilihan === 'glamping') {
+                weekdayPrice = hargaPerHari.glamping.weekday;
+                weekendPrice = hargaPerHari.glamping.weekend;
+            } else if (pilihan === 'acara') {
+                weekdayPrice = hargaPerHari.acara.weekday;
+                weekendPrice = hargaPerHari.acara.weekend;
+            }
+            
+            // Format ke mata uang Rupiah
+            function formatRupiah(angka) {
+                return 'Rp ' + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+            
+            // Update tampilan harga pada opsi hari
+            document.getElementById('weekdayPrice').textContent = formatRupiah(weekdayPrice);
+            document.getElementById('weekendPrice').textContent = formatRupiah(weekendPrice);
+        }
 
-            // !!! GANTI DENGAN NOMOR WHATSAPP ANDA !!!
-            // Format: 62 (kode negara) + nomor hp tanpa angka 0 di depan
-            // Contoh: 08123456789 menjadi 628123456789
-            const targetPhoneNumber = '6288224728486'; 
+        // Fungsi untuk otomatis memilih tipe hari berdasarkan tanggal
+        function autoSelectDayType() {
+            const tanggal = document.getElementById('tanggal').value;
+            if (!tanggal) return;
+            
+            const date = new Date(tanggal);
+            const dayOfWeek = date.getDay(); // 0 = Minggu, 1 = Senin, ..., 6 = Sabtu
+            
+            // Jika Sabtu atau Minggu, pilih weekend
+            if (dayOfWeek === 0 || dayOfWeek === 6) {
+                document.getElementById('weekend').checked = true;
+            } else {
+                document.getElementById('weekday').checked = true;
+            }
+            
+            calculatePrice();
+        }
 
+        // Fungsi untuk menghitung harga
+        function calculatePrice() {
+            const pilihan = document.getElementById('pilihan').value;
+            const kapasitas = document.getElementById('kapasitas').value;
+            const jumlahOrang = parseInt(document.getElementById('jumlahOrang').value) || 0;
+            const durasi = parseInt(document.getElementById('durasi').value) || 0;
+            const dayType = document.querySelector('input[name="dayType"]:checked')?.value || '';
+            
+            let harga = 0;
+            
+            if (pilihan === 'campervan') {
+                harga = dayType === 'weekend' ? 
+                    hargaPerHari.campervan.weekend * jumlahOrang : 
+                    hargaPerHari.campervan.weekday * jumlahOrang;
+            } else if (pilihan === 'camping') {
+                harga = dayType === 'weekend' ? 
+                    hargaPerHari.camping.weekend[kapasitas] : 
+                    hargaPerHari.camping.weekday[kapasitas];
+            } else if (pilihan === 'glamping') {
+                harga = dayType === 'weekend' ? 
+                    hargaPerHari.glamping.weekend : 
+                    hargaPerHari.glamping.weekday;
+            } else if (pilihan === 'acara') {
+                harga = dayType === 'weekend' ? 
+                    hargaPerHari.acara.weekend : 
+                    hargaPerHari.acara.weekday;
+            }
+            
+            const totalHarga = harga * durasi;
+            const dpHarga = Math.round(totalHarga * 0.2); // DP 20%
+            
+            // Format ke mata uang Rupiah
+            function formatRupiah(angka) {
+                return 'Rp ' + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+            
+            // Update tampilan harga
+            document.getElementById('tipeHari').textContent = dayType === 'weekend' ? 'Weekend' : 
+                                                        dayType === 'weekday' ? 'Weekday' : '-';
+            document.getElementById('hargaPerHari').textContent = formatRupiah(harga);
+            document.getElementById('durasiHarga').textContent = durasi + ' hari';
+            document.getElementById('totalHarga').textContent = formatRupiah(totalHarga);
+            document.getElementById('dpHarga').textContent = formatRupiah(dpHarga);
+        }
+
+        // Fungsi untuk mengirim pesan ke WhatsApp
+        function sendToWhatsApp(targetPhoneNumber) {
             // Ambil semua nilai dari form
             const nama = document.getElementById('nama').value;
             const notlp = document.getElementById('notlp').value;
             const pilihan = document.getElementById('pilihan').value;
             const kapasitas = document.getElementById('kapasitas').value;
+            const jumlahOrang = document.getElementById('jumlahOrang').value;
             const tanggal = document.getElementById('tanggal').value;
             const durasi = document.getElementById('durasi').value;
             const keterangan = document.getElementById('keterangan').value;
+            const dayType = document.querySelector('input[name="dayType"]:checked')?.value || '';
             
-            // Ambil nama file bukti pembayaran (karena file tidak bisa dikirim langsung via URL)
-            const buktiFile = document.getElementById('buktiPembayaran').files[0];
-            const buktiFileName = buktiFile ? buktiFile.name : 'Tidak ada file';
+            // Ambil nilai harga dari tampilan
+            const tipeHariText = document.getElementById('tipeHari').textContent;
+            const hargaPerHariText = document.getElementById('hargaPerHari').textContent;
+            const totalHargaText = document.getElementById('totalHarga').textContent;
+            const dpHargaText = document.getElementById('dpHarga').textContent;
 
             // Format pesan yang akan dikirim
             let message = `Halo, saya ingin melakukan reservasi dengan detail berikut:%0A%0A`; // %0A adalah enter/garis baru
             message += `*Nama Lengkap:* ${nama}%0A`;
             message += `*No. Telepon/WhatsApp:* ${notlp}%0A`;
             message += `*Pilihan Reservasi:* ${pilihan.charAt(0).toUpperCase() + pilihan.slice(1)}%0A`;
+            message += `*Tipe Hari:* ${tipeHariText}%0A`;
             
             // Tambahkan kapasitas hanya jika pilihannya camping
             if (pilihan === 'camping') {
                 message += `*Kapasitas Tenda:* ${kapasitas} Orang%0A`;
+            } else if (pilihan === 'campervan') {
+                message += `*Jumlah Orang:* ${jumlahOrang} Orang%0A`;
             }
 
             message += `*Tanggal Reservasi:* ${tanggal}%0A`;
             message += `*Durasi:* ${durasi} hari%0A`;
             message += `*Keterangan:* ${keterangan || '-'}%0A%0A`; // Tampilkan '-' jika keterangan kosong
-            message += `*Bukti Pembayaran:* ${buktiFileName} (akan dikirimkan pada chat berikutnya)`;
+            message += `*Detail Harga:*%0A`;
+            message += `Harga per hari: ${hargaPerHariText}%0A`;
+            message += `Total Harga: ${totalHargaText}%0A`;
+            message += `DP (20%): ${dpHargaText}%0A%0A`;
+            message += `Saya akan melakukan pembayaran DP melalui QRIS dan melampirkan buktinya pada chat berikutnya.`;
 
             // Buat URL WhatsApp
             const whatsappURL = `https://wa.me/${targetPhoneNumber}?text=${message}`;
@@ -277,7 +550,33 @@
             window.open(whatsappURL, '_blank');
 
             // Tampilkan pesan konfirmasi kepada pengguna
-            alert('Terima kasih! WhatsApp telah terbuka. Silakan kirim pesan tersebut dan lampirkan bukti pembayaran Anda.');
+            alert('Terima kasih! WhatsApp telah terbuka. Silakan kirim pesan tersebut dan lampirkan bukti pembayaran DP Anda.');
+        }
+
+        // Event listener untuk tombol Admin Amar
+        document.getElementById('submitToAmar').addEventListener('click', function(event) {
+            // Mencegah form dikirim secara default
+            event.preventDefault(); 
+            
+            // Nomor WhatsApp Admin Amar
+            const targetPhoneNumber = '6288224728486';
+            
+            // Kirim ke WhatsApp
+            sendToWhatsApp(targetPhoneNumber);
+        });
+
+        // Event listener untuk tombol Admin Lain
+        document.getElementById('submitToAdmin').addEventListener('click', function(event) {
+            // Mencegah form dikirim secara default
+            event.preventDefault(); 
+            
+            // !!! GANTI DENGAN NOMOR WHATSAPP ADMIN LAIN !!!
+            // Format: 62 (kode negara) + nomor hp tanpa angka 0 di depan
+            // Contoh: 08123456789 menjadi 628123456789
+            const targetPhoneNumber = '6281999297101'; // Ganti dengan nomor WhatsApp admin lain
+            
+            // Kirim ke WhatsApp
+            sendToWhatsApp(targetPhoneNumber);
         });
     </script>
 
