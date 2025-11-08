@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peta Interaktif Denah Camp</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        header {
+            background-color: #2c7a2c;
+            color: white;
+            padding: 1rem 2rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .map-container {
+            position: relative;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        #map {
+            height: 600px;
+            width: 100%;
+            position: relative;
+        }
+        
+        .map-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        
+        .map-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+        
+        .area-marker {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(44, 122, 44, 0.7);
+            border: 2px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .area-marker:hover {
+            transform: scale(1.2);
+            background-color: rgba(44, 122, 44, 0.9);
+            z-index: 10;
+        }
+        
+        /* Posisi marker yang disesuaikan dengan lokasi pada gambar */
+        .area-marker.cluster-a { top: 30%; left: 40%; }
+        .area-marker.cluster-b { top: 25%; left: 45%; }
+        .area-marker.cluster-c { top: 30%; left: 65%; }
+        .area-marker.cluster-d { top: 45%; left: 60%; }
+        .area-marker.kedai-kopi { top: 45%; left: 25%; }
+        .area-marker.glamping { top: 55%; left: 60%; }
+        .area-marker.pemancingan { top: 55%; left: 35%; }
+        .area-marker.kolam { top: 50%; left: 45%; }
+        .area-marker.air-toilet { top: 25%; left: 35%; }
+        
+        .info-panel {
+            background-color: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .info-panel h2 {
+            color: #2c7a2c;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .area-info {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .area-info.active {
+            display: block;
+        }
+        
+        .area-info h3 {
+            color: #2c7a2c;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+        
+        .area-info p {
+            margin-bottom: 1rem;
+        }
+        
+        .area-info .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .area-info .feature {
+            background-color: #f0f7f0;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .area-info .feature i {
+            color: #2c7a2c;
+        }
+        
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: rgba(44, 122, 44, 0.7);
+        }
+        
+        .instructions {
+            background-color: #f0f7f0;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .instructions p {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .instructions i {
+            color: #2c7a2c;
+        }
+        
+        .tooltip {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 0.5rem 0.8rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .tooltip.show {
+            opacity: 1;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.5rem;
+            }
+            
+            #map {
+                height: 400px;
+            }
+            
+            .area-marker {
+                width: 30px;
+                height: 30px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><i class="fas fa-map-marked-alt"></i> Peta Interaktif Denah Camp</h1>
+        <p>Jelajahi area-area di Denah Camp dengan mengklik marker pada peta</p>
+    </header>
+    
+    <div class="container">
+        <div class="instructions">
+            <p><i class="fas fa-info-circle"></i> Klik pada marker di peta untuk melihat informasi detail tentang setiap area.</p>
+        </div>
+        
+        <div class="map-container">
+            <div id="map">
+                <!-- Gambar peta Denah Camp -->
+                <img src="https://z-cdn-media.chatglm.cn/files/2403cd56-1844-4b3c-877f-6c8b054938de_Denah%20Camping%20%281%29.jpg?auth_key=1862589880-e69875f505644e10b7ea2a481953d7ba-0-def73af556110fe47e363cd4009cb70c" alt="Denah Camp Map" class="map-image">
+                
+                <div class="map-overlay">
+                    <!-- Marker untuk Cluster A -->
+                    <div class="area-marker cluster-a" data-area="cluster-a">
+                        <span>A</span>
+                    </div>
+                    
+                    <!-- Marker untuk Cluster B -->
+                    <div class="area-marker cluster-b" data-area="cluster-b">
+                        <span>B</span>
+                    </div>
+                    
+                    <!-- Marker untuk Cluster C -->
+                    <div class="area-marker cluster-c" data-area="cluster-c">
+                        <span>C</span>
+                    </div>
+                    
+                    <!-- Marker untuk Cluster D -->
+                    <div class="area-marker cluster-d" data-area="cluster-d">
+                        <span>D</span>
+                    </div>
+                    
+                    <!-- Marker untuk Kedai Kopi -->
+                    <div class="area-marker kedai-kopi" data-area="kedai-kopi">
+                        <i class="fas fa-coffee"></i>
+                    </div>
+                    
+                    <!-- Marker untuk Glamping -->
+                    <div class="area-marker glamping" data-area="glamping">
+                        <i class="fas fa-campground"></i>
+                    </div>
+                    
+                    <!-- Marker untuk Pemancingan -->
+                    <div class="area-marker pemancingan" data-area="pemancingan">
+                        <i class="fas fa-fish"></i>
+                    </div>
+                    
+                    <!-- Marker untuk Kolam -->
+                    <div class="area-marker kolam" data-area="kolam">
+                        <i class="fas fa-water"></i>
+                    </div>
+                    
+                    
+                    
+                    <!-- Marker untuk Air/Toilet -->
+                    <div class="area-marker air-toilet" data-area="air-toilet">
+                        <i class="fas fa-restroom"></i>
+                    </div>
+                </div>
+                
+                <div class="tooltip" id="tooltip"></div>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <h2>Informasi Area</h2>
+            
+            <!-- Informasi Cluster A -->
+            <div class="area-info" id="cluster-a-info">
+                <h3>Cluster A - Camp & Event</h3>
+                <p>Area Cluster A dirancang khusus untuk kegiatan berkemah dan acara. Area ini memiliki kapasitas yang lebih besar dan dilengkapi dengan fasilitas pendukung untuk berbagai jenis acara.</p>
+                <div class="features">
+                    <div class="feature"><i class="fas fa-check"></i> Area berkemah luas</div>
+                    <div class="feature"><i class="fas fa-check"></i> Area acara terbuka</div>
+                    <div class="feature"><i class="fas fa-check"></i> Akses mudah ke jalan utama</div>
+                </div>
+            </div>
+            
+            <!-- Informasi Cluster B -->
+            <div class="area-info" id="cluster-b-info">
+                <h3>Cluster B - Camp & Campervan</h3>
+                <p>Cluster B adalah area khusus untuk berkemah dan parkir campervan. Area ini dilengkapi dengan fasilitas khusus untuk pengguna campervan seperti akses listrik dan air.</p>
+                <div class="features">
+                    <div class="feature"><i class="fas fa-check"></i> Area campervan</div>
+                    <div class="feature"><i class="fas fa-check"></i> Akses listrik</div>
+                    <div class="feature"><i class="fas fa-check"></i> Akses air</div>
+                </div>
+            </div>
+            
+            <!-- Informasi Cluster C -->
+            <div class="area-info" id="cluster-c-info">
+                <h3>Cluster C - Camp</h3>
+                <p>Cluster C adalah area berkemah yang lokasinya dekat dengan Front Office. Area ini sangat nyaman bagi pengunjung yang ingin akses mudah ke fasilitas utama.</p>
+                <div class="features">
+                    <div class="feature"><i class="fas fa-check"></i> Dekat Front Office</div>
+                    <div class="feature"><i class="fas fa-check"></i> Akses mudah ke fasilitas</div>
+                    <div class="feature"><i class="fas fa-check"></i> Area berkemah nyaman</div>
+                </div>
+            </div>
+            
+            <!-- Informasi Cluster D -->
+            <div class="area-info" id="cluster-d-info">
+                <h3>Cluster D - Camp</h3>
+                <p>Cluster D adalah area berkemah yang lokasinya dekat dengan area Glamping. Area ini cocok bagi pengunjung yang ingin merasakan pengalaman berkemah dengan akses mudah ke fasilitas Glamping.</p>
+                <div class="features">
+                    <div class="feature"><i class="fas fa-check"></i> Dekat area Glamping</div>
+                    <div class="feature"><i class="fas fa-check"></i> Akses mudah ke fasilitas Glamping</div>
+                    <div class="feature"><i class="fas fa-check"></i> Area berkemah nyaman</div>
+                </div>
+            </div>
+            
+            <!-- Informasi Kedai Kopi -->
+            <div class="area-info" id="kedai-kopi-info">
+                <h3>Kedai Kopi</h3>
+                <p>Nikmati berbagai pilihan kopi dan makanan ringan di Kedai Kopi kami. Tempat yang sempurna untuk bersantai sambil menikmati pemandangan alam sekitar.</p>
+                <div class="features">
+                    <div class="feature"><i class="fas fa-check"></i> Berbagai pilihan kopi</div>
+                    <div class="feature"><i class="fas fa-check"></i> Makanan ringan</div>
+                    <div class="feature"><i class="fas fa-check"></i> Area duduk nyaman</div>
+                </div>
+            </div>
+            
+            <!-- Informasi Glamping -->
+            <div class="area-info" id="glamping-info">
+                <h3>Glamping</h3>
+                <p>Rasakan pengalaman berkemah mewah di area Glamping kami. Tenda-tenda berkualitas tinggi dengan fasilitas lengkap untuk kenyamanan Anda.</p>
+                <div class="features">
+                    <div class="feature"><i class="fas fa-check"></i> Tenda mewah</div>
+                    <div class="feature"><i class="fas fa-check"></i> Kasur nyaman</div>
+                    <div class="feature"><i class="fas fa-check"></i> Fasilitas lengkap</div>
+                </div>
+            </div>
+            
+            <!-- Informasi Pemancingan -->
+            <div class="area-info" id="pemancingan-info">
+                <h3>Pemancingan</h3>
+                <p>Area pemancingan kami adalah tempat yang sempurna untuk menikmati hobi memancing. Kolam kami berisi berbagai jenis ikan yang dapat Anda pancing.</p>
+                <div class="features">
+                    <div class="feature"><i class="fas fa-check"></i> Berbagai jenis ikan</div>
+                    <div class="feature"><i class="fas fa-check"></i> Area pemancingan nyaman</div>
+                    <div class="feature"><i class="fas fa-check"></i> Peralatan pancing tersedia</div>
+                </div>
+            </div>
+            
+            <!-- Informasi Kolam -->
+            <div class="area-info" id="kolam-info">
+                <h3>Kolam</h3>
+                <p>Nikmati keindahan kolam kami yang menawarkan pemandangan yang menenangkan. Kolam ini juga menjadi habitat bagi berbagai jenis ikan dan tanaman air.</p>
+                <div class="features">
+                    <div class="feature"><i class="fas fa-check"></i> Pemandangan indah</div>
+                    <div class="feature"><i class="fas fa-check"></i> Area bersantai</div>
+                    <div class="feature"><i class="fas fa-check"></i> Habitat ikan dan tanaman air</div>
+                </div>
+            </div>
+            
+            <!-- Informasi Listrik -->
+            <div class="area-info" id="listrik-info">
+                <h3>Fasilitas Listrik</h3>
+                <p>Area ini menyediakan akses listrik untuk pengunjung yang membutuhkan sumber daya listrik selama berkemah.</p>
+                <div class="features">
+                    <div class="feature"><i class="fas fa-check"></i> Akses listrik 24 jam</div>
+                    <div class="feature"><i class="fas fa-check"></i> Stop kontak tersedia</div>
+                    <div class="feature"><i class="fas fa-check"></i> Aman untuk peralatan elektronik</div>
+                </div>
+            </div>
+            
+            <!-- Informasi Air/Toilet -->
+            <div class="area-info" id="air-toilet-info">
+                <h3>Fasilitas Air & Toilet</h3>
+                <p>Fasilitas air dan toilet kami selalu bersih dan terawat untuk kenyamanan pengunjung. Tersedia air bersih dan toilet yang nyaman.</p>
+                <div class="features">
+                    <div class="feature"><i class="fas fa-check"></i> Air bersih</div>
+                    <div class="feature"><i class="fas fa-check"></i> Toilet bersih</div>
+                    <div class="feature"><i class="fas fa-check"></i> Kamar mandi</div>
+                </div>
+            </div>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color"></div>
+                    <span>Cluster A-D</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color"></div>
+                    <span>Fasilitas</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color"></div>
+                    <span>Area Rekreasi</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const markers = document.querySelectorAll('.area-marker');
+            const tooltip = document.getElementById('tooltip');
+            
+            // Tambahkan event listener untuk setiap marker
+            markers.forEach(marker => {
+                // Event hover untuk menampilkan tooltip
+                marker.addEventListener('mouseenter', function(e) {
+                    const area = this.getAttribute('data-area');
+                    let tooltipText = '';
+                    
+                    switch(area) {
+                        case 'cluster-a':
+                            tooltipText = 'Cluster A - Camp & Event';
+                            break;
+                        case 'cluster-b':
+                            tooltipText = 'Cluster B - Camp & Campervan';
+                            break;
+                        case 'cluster-c':
+                            tooltipText = 'Cluster C - Camp';
+                            break;
+                        case 'cluster-d':
+                            tooltipText = 'Cluster D - Camp';
+                            break;
+                        case 'kedai-kopi':
+                            tooltipText = 'Kedai Kopi';
+                            break;
+                        case 'glamping':
+                            tooltipText = 'Glamping';
+                            break;
+                        case 'pemancingan':
+                            tooltipText = 'Pemancingan';
+                            break;
+                        case 'kolam':
+                            tooltipText = 'Kolam';
+                            break;
+                        case 'listrik':
+                            tooltipText = 'Fasilitas Listrik';
+                            break;
+                        case 'air-toilet':
+                            tooltipText = 'Fasilitas Air & Toilet';
+                            break;
+                    }
+                    
+                    tooltip.textContent = tooltipText;
+                    tooltip.classList.add('show');
+                    
+                    // Posisikan tooltip di dekat marker
+                    const rect = this.getBoundingClientRect();
+                    const mapRect = document.getElementById('map').getBoundingClientRect();
+                    
+                    tooltip.style.left = (rect.left - mapRect.left + rect.width / 2 - tooltip.offsetWidth / 2) + 'px';
+                    tooltip.style.top = (rect.top - mapRect.top - tooltip.offsetHeight - 10) + 'px';
+                });
+                
+                // Sembunyikan tooltip saat mouse keluar
+                marker.addEventListener('mouseleave', function() {
+                    tooltip.classList.remove('show');
+                });
+                
+                // Event klik untuk menampilkan informasi area
+                marker.addEventListener('click', function() {
+                    const area = this.getAttribute('data-area');
+                    
+                    // Sembunyikan semua informasi area
+                    document.querySelectorAll('.area-info').forEach(info => {
+                        info.classList.remove('active');
+                    });
+                    
+                    // Tampilkan informasi area yang dipilih
+                    const areaInfo = document.getElementById(`${area}-info`);
+                    if (areaInfo) {
+                        areaInfo.classList.add('active');
+                        
+                        // Scroll ke informasi area
+                        areaInfo.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                });
+            });
+            
+            // Fungsi untuk menyesuaikan posisi marker saat ukuran jendela berubah
+            function adjustMarkerPositions() {
+                const mapImage = document.querySelector('.map-image');
+                if (mapImage.complete) {
+                    // Jika gambar sudah dimuat, tidak perlu melakukan apa-apa
+                    return;
+                }
+                
+                // Jika gambar belum dimuat, tunggu hingga dimuat
+                mapImage.addEventListener('load', function() {
+                    // Posisi marker sudah ditentukan dalam CSS dengan persentase
+                    // sehingga akan otomatis menyesuaikan dengan ukuran gambar
+                });
+            }
+            
+            // Panggil fungsi saat halaman dimuat
+            adjustMarkerPositions();
+            
+            // Panggil fungsi saat ukuran jendela berubah
+            window.addEventListener('resize', adjustMarkerPositions);
+        });
+    </script>
+</body>
+</html>
