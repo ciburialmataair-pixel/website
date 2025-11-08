@@ -320,7 +320,8 @@ canvas {
 <canvas id="stars"></canvas>
 
 <div class="mobile-container">
- 
+  <!-- Mobile Header -->
+  
   <!-- Mobile Icon Carousel -->
   <div class="mobile-icon-container" id="mobileIconList"></div>
   
@@ -392,7 +393,7 @@ const characters = [
     ring: "Guide & helm",
     type: "Trek 1 km",
     dmg: "-",
-    include: "-",
+    include: "Rp.100.000,-",
     image: "ATV.png",
     icon: "quad.png",
     video: "atv-video.mp4"
@@ -521,7 +522,7 @@ function renderInfo() {
         <p><b class="text-white">✅:</b> ${c.ring}</p>
         <p><b class="text-white">✅:</b> ${c.type}</p>
         <p><b class="text-white">✅:</b> ${c.dmg}</p>
-        <p><b class="text-white">✅:</b> ${c.include}</p>
+        <p><b class="text-white">HARGA:</b> ${c.include}</p>
       </div>
     `;
     
@@ -668,5 +669,4 @@ videoModal.addEventListener('click', (e) => {
 });
 </script>
 </body>
-
 </html>
