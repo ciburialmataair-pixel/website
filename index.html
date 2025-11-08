@@ -65,6 +65,33 @@
         .nav-links a:hover::after { width: 100%; }
         .nav-links a:hover { color: var(--accent); text-shadow: var(--glow); }
 
+        /* Burger Menu */
+        .burger {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 21px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+        .burger span {
+            height: 3px;
+            width: 100%;
+            background-color: var(--accent);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+        .burger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .burger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .burger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
         /* HERO WITH VIDEO */
         .hero {
             /* reduce hero video size so it's less dominating */
@@ -171,11 +198,32 @@
             to { text-shadow: 0 0 40px rgba(0,255,157,0.9); }
         }
 
+        /* Mobile adjustments for gallery and other components */
         @media (max-width: 768px) {
             .hero h1 { font-size: 3rem; }
             .about-grid { grid-template-columns: 1fr; }
-            .nav-links { display: none; }
-            nav { justify-content: center; }
+            .nav-links { 
+                display: flex; 
+                flex-direction: column;
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 70%;
+                height: 100vh;
+                background: rgba(10, 20, 40, 0.95);
+                padding: 5rem 2rem;
+                gap: 2rem;
+                transition: right 0.5s ease;
+                z-index: 1000;
+                backdrop-filter: blur(10px);
+            }
+            .nav-links.active {
+                right: 0;
+            }
+            .burger {
+                display: flex;
+            }
+            nav { justify-content: space-between; }
         }
 
         /* Mobile adjustments for gallery and other components */
@@ -206,8 +254,8 @@
             .gallery-nav { width: 34px; height: 34px; }
             .gallery-dot { width: 8px; height: 8px; }
         }
-		
-		/* === DNA STYLE - WAHANA SECTION === */
+        
+        /* === DNA STYLE - WAHANA SECTION === */
 .dna-filter-tabs {
     display: flex;
     justify-content: center;
@@ -602,6 +650,57 @@ a:hover, button:hover, .btn:hover, .dna-tab:hover, .card:hover {
     transform: scale(1.05);
     transition: transform 0.3s ease;
 }
+
+/* --- PERBAIKAN MENU BURGER (TAMBAHKAN DI AKHIR) --- */
+
+/* Tampilkan burger hanya di mobile */
+@media (max-width: 768px) {
+    .burger {
+        display: flex !important;
+    }
+}
+
+/* Gaya untuk menu slide di mobile */
+@media (max-width: 768px) {
+    nav .nav-links {
+        display: flex !important;
+        flex-direction: column !important;
+        position: fixed !important;
+        top: 0 !important;
+        right: -100% !important; /* Awalnya sembunyi di kanan */
+        width: 75% !important;
+        height: 100vh !important;
+        background: rgba(10, 20, 40, 0.98) !important;
+        backdrop-filter: blur(15px) !important;
+        padding: 5rem 2rem !important;
+        gap: 2.5rem !important;
+        transition: right 0.4s ease !important;
+        z-index: 999 !important;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Tampilkan menu saat kelas 'active' ada */
+    nav .nav-links.active {
+        right: 0% !important;
+    }
+
+    /* Pastikan navigasi utama tetap rapi */
+    nav {
+        justify-content: space-between !important;
+    }
+}
+
+/* Animasi burger menjadi 'X' */
+.burger.active span:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+.burger.active span:nth-child(2) {
+    opacity: 0;
+}
+.burger.active span:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+}
     </style>
 </head>
 <body>
@@ -617,7 +716,13 @@ a:hover, button:hover, .btn:hover, .dna-tab:hover, .card:hover {
             <a href="#tiket">Tiket</a>
             <a href="#lokasi">Lokasi</a>
             <a href="#contact">kontak</a>
-			<a href="reservasi.html">Reservasi</a>
+            <a href="reservasi.html">Reservasi</a>
+        </div>
+        <!-- Burger Menu -->
+        <div class="burger">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
     </nav>
 
@@ -789,15 +894,15 @@ a:hover, button:hover, .btn:hover, .dna-tab:hover, .card:hover {
             <div class="contact-item" data-aos="fade-up" data-aos-delay="200">
                 <p>Telepon</p>
                 <h3>Amar</h3>
-				<p>+62 812-9511-1107</p>
-				<h3>Shinta</h3>
+                <p>+62 812-9511-1107</p>
+                <h3>Shinta</h3>
                 <p>+62 819-9929-7101</p>
             </div>
             <div class="contact-item" data-aos="fade-up" data-aos-delay="300">
                 <p>Chat</p>
                 <h3>WhatsApp</h3>
                 <p><a href="https://wa.me/6281295111107" target="_blank">Chat Dengan Amar</a></p>
-				<p><a href="https://wa.me/6281999297101" target="_blank">Chat Dengan Shinta</a></p>
+                <p><a href="https://wa.me/6281999297101" target="_blank">Chat Dengan Shinta</a></p>
             </div>
         </div>
     </section>
@@ -806,10 +911,10 @@ a:hover, button:hover, .btn:hover, .dna-tab:hover, .card:hover {
     <footer>
         <p>&copy; 2025 Taman Wisata Mata Air Ciburial. Dibuat dengan cinta untuk pecinta alam.</p>
     </footer>
-	
-	<!-- Tailwind CDN -->
-	<script src="https://cdn.tailwindcss.com"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <!-- SCRIPTS -->
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
@@ -851,8 +956,8 @@ a:hover, button:hover, .btn:hover, .dna-tab:hover, .card:hover {
                 video.pause();
             }
         });
-		
-		// === DNA FILTER SYSTEM ===
+        
+        // === DNA FILTER SYSTEM ===
 document.querySelectorAll('.dna-tab').forEach(tab => {
     tab.addEventListener('click', () => {
         const filter = tab.getAttribute('data-filter');
@@ -935,6 +1040,23 @@ document.querySelectorAll('a, button, .btn, .dna-tab').forEach(el => {
         cursor.querySelector('svg').style.filter = 'drop-shadow(0 0 8px rgba(0, 255, 157, 0.6))';
     });
 });
+
+        // Burger Menu Toggle
+        const burger = document.querySelector('.burger');
+        const navLinks = document.querySelector('.nav-links');
+        
+        burger.addEventListener('click', () => {
+            burger.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+
+        // Close menu when clicking on a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                burger.classList.remove('active');
+                navLinks.classList.remove('active');
+            });
+        });
     </script>
     <!-- Loader: fetch and inject character.html into #character-embed -->
     <script>
@@ -1003,8 +1125,45 @@ document.querySelectorAll('a, button, .btn, .dna-tab').forEach(el => {
             }
         });
     })();
-    </script>
-	
+	</script>
+	<script>
+// --- PERBAIKAN MENU BURGER (TAMBAHKAN DI AKHIR BODY) ---
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("Memulai inisialisasi menu burger...");
+
+    const burgerIcon = document.querySelector('.burger');
+    const navMenu = document.querySelector('.nav-links');
+
+    // Cek apakah elemen ditemukan
+    if (burgerIcon && navMenu) {
+        console.log("Elemen burger dan nav-links ditemukan.");
+
+        // Fungsi untuk membuka/tutup menu
+        function toggleMenu() {
+            burgerIcon.classList.toggle('active');
+            navMenu.classList.toggle('active');
+            console.log("Menu diklik, status active:", burgerIcon.classList.contains('active'));
+        }
+
+        // Event listener untuk ikon burger
+        burgerIcon.addEventListener('click', toggleMenu);
+
+        // Event listener untuk menutup menu saat link diklik
+        const menuLinks = navMenu.querySelectorAll('a');
+        menuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                console.log("Link diklik, menutup menu.");
+                burgerIcon.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+
+    } else {
+        console.error("Elemen .burger atau .nav-links tidak ditemukan. Pastikan HTML sudah benar.");
+    }
+});
+</script>
+    
 
 </body>
 
