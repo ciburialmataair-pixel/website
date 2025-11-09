@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulir Reservasi Acara - Nama Usaha Anda</title>
+    <style>
+        /* --- Gaya Umum --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        /* --- Container Utama --- */
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        /* --- Gaya Form --- */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        input[type="date"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* Penting agar padding tidak mengubah lebar */
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="tel"]:focus,
+        input[type="date"]:focus,
+        input[type="number"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical; /* Memungkinkan mengubah tinggi textarea */
+        }
+
+        /* --- Gaya Tombol --- */
+        .button-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .button-container button {
+            flex: 1;
+            padding: 15px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .button-amar {
+            background-color: #27ae60;
+        }
+
+        .button-amar:hover {
+            background-color: #229954;
+        }
+
+        .button-admin {
+            background-color: #3498db;
+        }
+
+        .button-admin:hover {
+            background-color: #2980b9;
+        }
+
+        /* --- Gaya Bagian QRIS --- */
+        .qris-section {
+            text-align: center;
+            border-top: 2px dashed #bdc3c7;
+            padding-top: 20px;
+            margin-top: 30px;
+        }
+
+        .qris-section h3 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .qris-section p {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .qris-section img {
+            max-width: 200px;
+            height: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        /* --- Gaya Harga --- */
+        .price-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #3498db;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .price-row.total {
+            font-weight: bold;
+            font-size: 18px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .price-row.dp {
+            color: #e74c3c;
+        }
+        
+        /* Gaya untuk baris potongan harga */
+        .price-row.discount {
+            color: #27ae60;
+            font-size: 0.9em;
+        }
+
+        /* --- Gaya Item Acara --- */
+        .event-item {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+        }
+
+        .event-item h4 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .input-group select,
+        .input-group input {
+            flex: 1; /* Membuat select dan input memiliki lebar yang sama (50:50) */
+        }
+
+        /* --- Gaya Extra Items --- */
+        .extra-items {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+        }
+
+        .extra-items h4 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        .extra-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .extra-item input[type="checkbox"] {
+            margin-right: 10px;
+            width: auto;
+        }
+
+        .extra-item label {
+            margin-bottom: 0;
+            font-weight: normal;
+            flex-grow: 1; /* Biarkan label mengambil ruang tersisa */
+        }
+
+        /* Gaya khusus untuk input jumlah pada extra item */
+        .extra-item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .extra-item-quantity input[type="number"] {
+            width: 70px; /* Lebar lebih kecil untuk input jumlah */
+            padding: 8px;
+            margin-left: 5px;
+        }
+        
+        /* --- Gaya Pricing Section (Tiket & Kendaraan) --- */
+        .pricing-section {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+
+        .pricing-section h4 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        /* --- Animasi sederhana untuk munculnya opsi --- */
+        .item-options {
+            display: none; /* Sembunyikan secara default */
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Formulir Reservasi Acara</h1>
+        <form id="reservationForm">
+            
+            <!-- Nama -->
+            <div class="form-group">
+                <label for="nama">Nama Lengkap:</label>
+                <input type="text" id="nama" name="nama" placeholder="Masukkan nama lengkap Anda" required>
+            </div>
+
+            <!-- No Telepon -->
+            <div class="form-group">
+                <label for="notlp">No. Telepon / WhatsApp:</label>
+                <input type="tel" id="notlp" name="notlp" placeholder="Contoh: 08123456789" required>
+            </div>
+
+            <!-- Bagian Tiket Masuk dan Kendaraan -->
+            <div class="pricing-section">
+                <h4>Biaya Masuk</h4>
+                <!-- Tiket Masuk -->
+                <div class="form-group">
+                    <label for="tiketMasukJumlah">Tiket Masuk (Per Orang)</label>
+                    <input type="number" id="tiketMasukJumlah" name="tiketMasukJumlah" min="1" placeholder="Jumlah orang" required onchange="calculatePrice();">
+                </div>
+
+                <!-- Pilihan Kendaraan -->
+                <div class="form-group">
+                    <label>Kendaraan</label>
+                    <div class="input-group">
+                        <select id="jenisKendaraan" name="jenisKendaraan" required onchange="calculatePrice();">
+                            <option value="">-- Jenis Kendaraan --</option>
+                            <option value="mobil">Mobil</option>
+                            <option value="motor">Motor</option>
+                            <option value="elf">ELF</option>
+                            <option value="bus">Bus</option>
+                        </select>
+                        <input type="number" id="jumlahKendaraan" name="jumlahKendaraan" min="1" placeholder="Jumlah unit" required onchange="calculatePrice();">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pilihan Item Reservasi -->
+            <div class="form-group">
+                <label for="itemAcara">Pilih Item Reservasi:</label>
+                <select id="itemAcara" name="itemAcara" required onchange="handleItemSelection(); calculatePrice();">
+                    <option value="">-- Pilih Item Reservasi --</option>
+                    <option value="auning">Tenda Auning</option>
+                    <option value="gazebo">Gazebo</option>
+                    <option value="lahan">Sewa Lahan</option>
+                </select>
+            </div>
+
+            <!-- Opsi Tenda Auning -->
+            <div id="auningOptions" class="item-options event-item">
+                <h4>Detail Tenda Auning</h4>
+                <div class="input-group">
+                    <input type="number" id="auningPanjang" name="auningPanjang" min="6" placeholder="Panjang (meter)" onchange="calculatePrice();">
+                    <span>x</span>
+                    <input type="number" id="auningLebar" name="auningLebar" min="6" placeholder="Lebar (meter)" onchange="calculatePrice();">
+                </div>
+                <small>Ukuran minimal: 6 x 6 meter (36 m²)</small>
+            </div>
+
+            <!-- Opsi Gazebo -->
+            <div id="gazeboOptions" class="item-options event-item">
+                <h4>Detail Gazebo</h4>
+                <div class="form-group">
+                    <label for="gazeboLokasi">Lokasi Gazebo:</label>
+                    <select id="gazeboLokasi" name="gazeboLokasi" onchange="calculatePrice();">
+                        <option value="">-- Pilih Lokasi --</option>
+                        <option value="kolam">Kolam Renang</option>
+                        <option value="pemancingan">Pemancingan</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="gazeboJumlah">Jumlah Gazebo:</label>
+                    <input type="number" id="gazeboJumlah" name="gazeboJumlah" min="1" placeholder="Jumlah gazebo" onchange="calculatePrice();">
+                </div>
+            </div>
+
+            <!-- Opsi Sewa Lahan -->
+            <div id="lahanOptions" class="item-options event-item">
+                <h4>Detail Sewa Lahan</h4>
+                <div class="form-group">
+                    <label for="kapasitasLahan">Pilih Kapasitas:</label>
+                    <select id="kapasitasLahan" name="kapasitasLahan" onchange="calculatePrice();">
+                        <option value="">-- Pilih Kapasitas --</option>
+                        <option value="50">20 - 50 Orang</option>
+                        <option value="100">60 - 100 Orang</option>
+                        <option value="200">100 - 200 Orang</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Extra Items -->
+            <div id="extraItemsContainer" class="item-options extra-items">
+                <h4>Extra Items (Bisa pilih lebih dari satu)</h4>
+                <div class="extra-item" id="extraListItem">
+                    <input type="checkbox" id="extraListrik" name="extraItem" value="listrik" onchange="calculatePrice();">
+                    <label for="extraListrik">Listrik</label>
+                </div>
+                <div class="extra-item">
+                    <input type="checkbox" id="extraSound" name="extraItem" value="sound" onchange="calculatePrice();">
+                    <label for="extraSound">Sound System</label>
+                </div>
+                <!-- Extra Item Tikar dengan Input Jumlah -->
+                <div class="extra-item extra-item-quantity">
+                    <input type="checkbox" id="extraTikar" name="extraItem" value="tikar" onchange="calculatePrice();">
+                    <label for="extraTikar">Tikar</label>
+                    <input type="number" id="extraTikarJumlah" name="extraTikarJumlah" min="1" value="1" placeholder="Jumlah" onchange="calculatePrice();">
+                </div>
+                <!-- Extra Item Flysheet dengan Input Jumlah -->
+                <div class="extra-item extra-item-quantity" id="extraFlysheetItem">
+                    <input type="checkbox" id="extraFlysheet" name="extraItem" value="flysheet" onchange="calculatePrice();">
+                    <label for="extraFlysheet">Flysheet</label>
+                    <input type="number" id="extraFlysheetJumlah" name="extraFlysheetJumlah" min="1" value="1" placeholder="Jumlah" onchange="calculatePrice();">
+                </div>
+            </div>
+
+            <!-- Tanggal Reservasi -->
+            <div class="form-group">
+                <label for="tanggal">Tanggal Reservasi:</label>
+                <input type="date" id="tanggal" name="tanggal" required>
+            </div>
+
+            <!-- Keterangan -->
+            <div class="form-group">
+                <label for="keterangan">Keterangan Tambahan:</label>
+                <textarea id="keterangan" name="keterangan" rows="4" placeholder="Tuliskan permintaan khusus atau informasi lainnya..."></textarea>
+            </div>
+
+            <!-- Perhitungan Harga -->
+            <div class="price-section">
+                <h3>Detail Harga</h3>
+                <div class="price-row">
+                    <span id="labelTiketMasuk">Tiket Masuk:</span>
+                    <span id="hargaTiket">Rp 0</span>
+                </div>
+                <div class="price-row discount" id="potonganTiketRow" style="display: none;">
+                    <span>Potongan Tiket:</span>
+                    <span id="potonganTiketDisplay">0 tiket</span>
+                </div>
+                <div class="price-row">
+                    <span>Kendaraan:</span>
+                    <span id="hargaKendaraan">Rp 0</span>
+                </div>
+                <div class="price-row">
+                    <span>Item Utama:</span>
+                    <span id="hargaItemUtama">Rp 0</span>
+                </div>
+                <div class="price-row">
+                    <span>Extra Item:</span>
+                    <span id="hargaExtra">Rp 0</span>
+                </div>
+                <div class="price-row total">
+                    <span>Total Harga:</span>
+                    <span id="totalHarga">Rp 0</span>
+                </div>
+                <div class="price-row dp">
+                    <span>DP (20%):</span>
+                    <span id="dpHarga">Rp 0</span>
+                </div>
+            </div>
+
+            <!-- Gambar QRIS -->
+            <div class="qris-section">
+                <h3>Pembayaran DP via QRIS</h3>
+                <p>Silakan scan kode QR berikut untuk melakukan pembayaran DP (20% dari total). Sisanya dapat dibayar saat tiba di lokasi.</p>
+                <img src="QRIS.jpg" alt="Kode QRIS untuk Pembayaran">
+                <p>Cantumkan Bukti screenshoot pembayaran setelah memasuki whatsapp Admin</p>
+            </div>
+
+            <!-- Tombol Submit -->
+            <div class="form-group">
+                <div class="button-container">
+                    <button type="button" id="submitToAmar" class="button-amar">Kirim Reservasi ke Admin Amar</button>
+                    <button type="button" id="submitToAdmin" class="button-admin">Kirim Reservasi ke Admin Shinta</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        // Harga untuk setiap jenis item acara (harga tetap)
+        const hargaItem = {
+            tiketMasuk: 15000, // harga per orang
+            kendaraan: {
+                mobil: 15000,
+                motor: 5000,
+                elf: 25000, // Harga untuk ELF
+                bus: 50000
+            },
+            auning: 20000, // per meter persegi
+            gazebo: {
+                kolam: 60000, // per gazebo
+                pemancingan: 50000 // per gazebo
+            },
+            lahan: {
+                50: 750000,  // Harga untuk kapasitas 20-50 orang
+                100: 1500000, // Harga untuk kapasitas 60-100 orang
+                200: 2500000  // Harga untuk kapasitas 100-200 orang
+            },
+            extra: {
+                listrik: 50000,
+                sound: 250000,
+                tikar: 25000, // harga per unit
+                flysheet: 35000 // harga per unit
+            }
+        };
+
+        // Fungsi untuk menampilkan atau menyembunyikan opsi tambahan
+        function handleItemSelection() {
+            const itemAcaraSelect = document.getElementById('itemAcara');
+            const selectedValue = itemAcaraSelect.value;
+
+            // Sembunyikan semua opsi item terlebih dahulu
+            document.getElementById('auningOptions').style.display = 'none';
+            document.getElementById('gazeboOptions').style.display = 'none';
+            document.getElementById('lahanOptions').style.display = 'none';
+            document.getElementById('extraItemsContainer').style.display = 'none';
+
+            // Tampilkan opsi yang dipilih
+            if (selectedValue) {
+                document.getElementById(selectedValue + 'Options').style.display = 'block';
+                document.getElementById('extraItemsContainer').style.display = 'block';
+
+                // --- LOGIKA UNTUK MENYEMBUNYIKAN EXTRA ITEM TERTENTU ---
+                const extraListItem = document.getElementById('extraListItem');
+                const extraFlysheetItem = document.getElementById('extraFlysheetItem');
+
+                if (selectedValue === 'auning') {
+                    // Sembunyikan dan hapus centang pada item Listrik dan Flysheet
+                    extraListItem.style.display = 'none';
+                    document.getElementById('extraListrik').checked = false;
+                    extraFlysheetItem.style.display = 'none';
+                    document.getElementById('extraFlysheet').checked = false;
+                    // Reset jumlah flysheet ke 1
+                    document.getElementById('extraFlysheetJumlah').value = 1;
+                } else {
+                    // Tampilkan kembali untuk item lainnya
+                    extraListItem.style.display = 'flex';
+                    extraFlysheetItem.style.display = 'flex';
+                }
+            }
+        }
+
+        // Fungsi untuk menghitung harga
+        function calculatePrice() {
+            const itemAcara = document.getElementById('itemAcara').value;
+            const auningPanjang = parseInt(document.getElementById('auningPanjang').value) || 0;
+            const auningLebar = parseInt(document.getElementById('auningLebar').value) || 0;
+            const gazeboLokasi = document.getElementById('gazeboLokasi').value;
+            const gazeboJumlah = parseInt(document.getElementById('gazeboJumlah').value) || 0;
+            const kapasitasLahan = parseInt(document.getElementById('kapasitasLahan').value) || 0;
+            
+            // Ambil nilai dari bagian baru
+            const tiketMasukJumlah = parseInt(document.getElementById('tiketMasukJumlah').value) || 0;
+            const jenisKendaraan = document.getElementById('jenisKendaraan').value;
+            const jumlahKendaraan = parseInt(document.getElementById('jumlahKendaraan').value) || 0;
+            
+            let hargaTiket = 0;
+            let hargaKendaraan = 0;
+            let hargaItemUtama = 0;
+            let hargaExtra = 0;
+            
+            // --- LOGIKA POTONGAN HARGA TIKET ---
+            let potonganTiket = 0;
+            if (tiketMasukJumlah >= 100) {
+                potonganTiket = 5;
+            } else if (tiketMasukJumlah > 50) {
+                potonganTiket = 3;
+            }
+            const jumlahTiketBayar = tiketMasukJumlah - potonganTiket;
+            hargaTiket = jumlahTiketBayar * hargaItem.tiketMasuk;
+
+            // Hitung harga kendaraan
+            if (jenisKendaraan) {
+                hargaKendaraan = jumlahKendaraan * hargaItem.kendaraan[jenisKendaraan];
+            }
+
+            if (itemAcara) {
+                // Hitung harga item utama
+                if (itemAcara === 'auning') {
+                    if (auningPanjang >= 6 && auningLebar >= 6) {
+                        const luas = auningPanjang * auningLebar;
+                        hargaItemUtama = luas * hargaItem.auning;
+                    }
+                } else if (itemAcara === 'gazebo') {
+                    if (gazeboLokasi && gazeboJumlah > 0) {
+                        hargaItemUtama = gazeboJumlah * hargaItem.gazebo[gazeboLokasi];
+                    }
+                } else if (itemAcara === 'lahan') {
+                    if (kapasitasLahan > 0) {
+                        hargaItemUtama = hargaItem.lahan[kapasitasLahan];
+                    }
+                }
+                
+                // Hitung harga extra item
+                const checkedExtras = document.querySelectorAll('input[name="extraItem"]:checked');
+                checkedExtras.forEach(checkbox => {
+                    if (checkbox.value === 'tikar') {
+                        const jumlahTikar = parseInt(document.getElementById('extraTikarJumlah').value) || 1;
+                        hargaExtra += hargaItem.extra.tikar * jumlahTikar;
+                    } else if (checkbox.value === 'flysheet') {
+                        const jumlahFlysheet = parseInt(document.getElementById('extraFlysheetJumlah').value) || 1;
+                        hargaExtra += hargaItem.extra.flysheet * jumlahFlysheet;
+                    } else {
+                        hargaExtra += hargaItem.extra[checkbox.value];
+                    }
+                });
+            }
+            
+            const totalHarga = hargaTiket + hargaKendaraan + hargaItemUtama + hargaExtra;
+            const dpHarga = Math.round(totalHarga * 0.2); // DP 20%
+            
+            // Format ke mata uang Rupiah
+            function formatRupiah(angka) {
+                return 'Rp ' + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+            
+            // --- UPDATE TAMPILAN HARGA ---
+            // Update label dan harga tiket
+            document.getElementById('labelTiketMasuk').textContent = `Tiket Masuk (${jumlahTiketBayar} orang):`;
+            document.getElementById('hargaTiket').textContent = formatRupiah(hargaTiket);
+
+            // Tampilkan/sembunyikan baris potongan
+            const potonganRow = document.getElementById('potonganTiketRow');
+            if (potonganTiket > 0) {
+                potonganRow.style.display = 'flex';
+                document.getElementById('potonganTiketDisplay').textContent = `${potonganTiket} tiket gratis`;
+            } else {
+                potonganRow.style.display = 'none';
+            }
+            
+            document.getElementById('hargaKendaraan').textContent = formatRupiah(hargaKendaraan);
+            document.getElementById('hargaItemUtama').textContent = formatRupiah(hargaItemUtama);
+            document.getElementById('hargaExtra').textContent = formatRupiah(hargaExtra);
+            document.getElementById('totalHarga').textContent = formatRupiah(totalHarga);
+            document.getElementById('dpHarga').textContent = formatRupiah(dpHarga);
+        }
+
+        // Fungsi untuk mengirim pesan ke WhatsApp
+        function sendToWhatsApp(targetPhoneNumber) {
+            const nama = document.getElementById('nama').value;
+            const notlp = document.getElementById('notlp').value;
+            const itemAcara = document.getElementById('itemAcara').value;
+            const auningPanjang = document.getElementById('auningPanjang').value;
+            const auningLebar = document.getElementById('auningLebar').value;
+            const gazeboLokasi = document.getElementById('gazeboLokasi').value;
+            const gazeboJumlah = document.getElementById('gazeboJumlah').value;
+            const kapasitasLahanSelect = document.getElementById('kapasitasLahan');
+            const kapasitasLahanText = kapasitasLahanSelect.options[kapasitasLahanSelect.selectedIndex].text;
+            const tanggal = document.getElementById('tanggal').value;
+            const keterangan = document.getElementById('keterangan').value;
+            
+            // Ambil nilai dari bagian baru
+            const tiketMasukJumlah = parseInt(document.getElementById('tiketMasukJumlah').value) || 0;
+            const jenisKendaraanSelect = document.getElementById('jenisKendaraan');
+            const jenisKendaraanText = jenisKendaraanSelect.options[jenisKendaraanSelect.selectedIndex].text;
+            const jumlahKendaraan = document.getElementById('jumlahKendaraan').value;
+            
+            const hargaTiketText = document.getElementById('hargaTiket').textContent;
+            const hargaKendaraanText = document.getElementById('hargaKendaraan').textContent;
+            const hargaItemUtamaText = document.getElementById('hargaItemUtama').textContent;
+            const hargaExtraText = document.getElementById('hargaExtra').textContent;
+            const totalHargaText = document.getElementById('totalHarga').textContent;
+            const dpHargaText = document.getElementById('dpHarga').textContent;
+
+            // --- LOGIKA POTONGAN TIKET UNTUK WHATSAPP ---
+            let potonganTiket = 0;
+            if (tiketMasukJumlah >= 100) {
+                potonganTiket = 5;
+            } else if (tiketMasukJumlah > 50) {
+                potonganTiket = 3;
+            }
+            const jumlahTiketBayar = tiketMasukJumlah - potonganTiket;
+
+            let message = `Halo, saya ingin melakukan reservasi acara dengan detail berikut:%0A%0A`;
+            message += `*Nama Lengkap:* ${nama}%0A`;
+            message += `*No. Telepon/WhatsApp:* ${notlp}%0A`;
+            message += `*Tiket Masuk:* ${jumlahTiketBayar} orang (dari ${tiketMasukJumlah} total)%0A`;
+            if (potonganTiket > 0) {
+                message += `*Potongan Tiket:* ${potonganTiket} tiket gratis%0A`;
+            }
+            message += `*Kendaraan:* ${jumlahKendaraan} unit ${jenisKendaraanText}%0A`;
+            message += `*Item Reservasi:* ${itemAcara.charAt(0).toUpperCase() + itemAcara.slice(1)}%0A`;
+            
+            // Tambahkan detail item yang dipilih
+            if (itemAcara === 'auning' && auningPanjang && auningLebar) {
+                message += `*Detail Tenda Auning:* ${auningPanjang} x ${auningLebar} meter%0A`;
+            } else if (itemAcara === 'gazebo' && gazeboLokasi && gazeboJumlah) {
+                const lokasiText = gazeboLokasi === 'kolam' ? 'Kolam Renang' : 'Pemancingan';
+                message += `*Detail Gazebo:* ${gazeboJumlah} unit di ${lokasiText}%0A`;
+            } else if (itemAcara === 'lahan' && kapasitasLahanText) {
+                message += `*Detail Sewa Lahan:* Kapasitas ${kapasitasLahanText}%0A`;
+            }
+            
+            // Kumpulkan semua extra item yang dipilih
+            const checkedExtras = document.querySelectorAll('input[name="extraItem"]:checked');
+            if (checkedExtras.length > 0) {
+                let extraItemsText = '';
+                checkedExtras.forEach((checkbox, index) => {
+                    const label = document.querySelector(`label[for="${checkbox.id}"]`).textContent;
+                    let itemText = label;
+                    
+                    // Tambahkan jumlah untuk Tikar dan Flysheet
+                    if (checkbox.value === 'tikar') {
+                        const jumlahTikar = document.getElementById('extraTikarJumlah').value;
+                        itemText += ` (${jumlahTikar} unit)`;
+                    } else if (checkbox.value === 'flysheet') {
+                        const jumlahFlysheet = document.getElementById('extraFlysheetJumlah').value;
+                        itemText += ` (${jumlahFlysheet} unit)`;
+                    }
+                    
+                    extraItemsText += itemText;
+                    if (index < checkedExtras.length - 1) {
+                        extraItemsText += ', ';
+                    }
+                });
+                message += `*Extra Items:* ${extraItemsText}%0A`;
+            }
+
+            message += `*Tanggal Reservasi:* ${tanggal}%0A`;
+            message += `*Keterangan:* ${keterangan || '-'}%0A%0A`;
+            message += `*Detail Harga:*%0A`;
+            message += `Tiket Masuk: ${hargaTiketText}%0A`;
+            message += `Kendaraan: ${hargaKendaraanText}%0A`;
+            message += `Item Utama: ${hargaItemUtamaText}%0A`;
+            message += `Extra Item: ${hargaExtraText}%0A`;
+            message += `Total Harga: ${totalHargaText}%0A`;
+            message += `DP (20%): ${dpHargaText}%0A%0A`;
+            message += `Saya akan melakukan pembayaran DP melalui QRIS dan melampirkan buktinya pada chat berikutnya.`;
+
+            const whatsappURL = `https://wa.me/${targetPhoneNumber}?text=${message}`;
+            window.open(whatsappURL, '_blank');
+            alert('Terima kasih! WhatsApp telah terbuka. Silakan kirim pesan tersebut dan lampirkan bukti pembayaran DP Anda.');
+        }
+
+        // Event listener untuk tombol Admin Amar
+        document.getElementById('submitToAmar').addEventListener('click', function(event) {
+            event.preventDefault(); 
+            const targetPhoneNumber = '6288224728486';
+            sendToWhatsApp(targetPhoneNumber);
+        });
+
+        // Event listener untuk tombol Admin Lain
+        document.getElementById('submitToAdmin').addEventListener('click', function(event) {
+            event.preventDefault(); 
+            const targetPhoneNumber = '6281999297101';
+            sendToWhatsApp(targetPhoneNumber);
+        });
+    </script>
+
+</body>
+</html>

@@ -65,6 +65,67 @@
         .nav-links a:hover::after { width: 100%; }
         .nav-links a:hover { color: var(--accent); text-shadow: var(--glow); }
 
+        /* Dropdown Menu */
+        .dropdown {
+            position: relative;
+        }
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            cursor: pointer;
+            font-weight: 500;
+            position: relative;
+            transition: 0.3s;
+        }
+        .dropdown-toggle::after {
+            content: '▼';
+            font-size: 0.7rem;
+            transition: transform 0.3s;
+        }
+        .dropdown.active .dropdown-toggle::after {
+            transform: rotate(180deg);
+        }
+        .dropdown-toggle:hover {
+            color: var(--accent);
+            text-shadow: var(--glow);
+        }
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: rgba(10, 20, 40, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            min-width: 180px;
+            padding: 0.5rem 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 255, 157, 0.2);
+            z-index: 1001;
+        }
+        .dropdown.active .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .dropdown-menu a {
+            display: block;
+            padding: 0.7rem 1.5rem;
+            transition: all 0.2s;
+        }
+        .dropdown-menu a:hover {
+            background: rgba(0, 255, 157, 0.1);
+            color: var(--accent);
+            padding-left: 2rem;
+        }
+        .dropdown-menu a::after {
+            display: none;
+        }
+
         /* Burger Menu */
         .burger {
             display: none;
@@ -224,6 +285,26 @@
                 display: flex;
             }
             nav { justify-content: space-between; }
+            
+            /* Mobile dropdown adjustments */
+            .dropdown-menu {
+                position: static;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+                box-shadow: none;
+                border: none;
+                background: transparent;
+                padding-left: 1rem;
+                margin-top: 0.5rem;
+            }
+            .dropdown-menu a {
+                padding: 0.5rem 0;
+            }
+            .dropdown-menu a:hover {
+                background: transparent;
+                padding-left: 1.5rem;
+            }
         }
 
         /* Mobile adjustments for gallery and other components */
@@ -716,7 +797,13 @@ a:hover, button:hover, .btn:hover, .dna-tab:hover, .card:hover {
             <a href="#tiket">Tiket</a>
             <a href="#lokasi">Lokasi</a>
             <a href="interactifmap.html">Denah Lokasi</a>
-            <a href="reservasi.html">Reservasi</a>
+            <div class="dropdown">
+                <div class="dropdown-toggle">Reservasi</div>
+                <div class="dropdown-menu">
+                    <a href="reservasi.html">Camping</a>
+                    <a href="resAcara.html">Acara</a>
+                </div>
+            </div>
         </div>
         <!-- Burger Menu -->
         <div class="burger">
@@ -1125,8 +1212,8 @@ document.querySelectorAll('a, button, .btn, .dna-tab').forEach(el => {
             }
         });
     })();
-	</script>
-	<script>
+    </script>
+    <script>
 // --- PERBAIKAN MENU BURGER (TAMBAHKAN DI AKHIR BODY) ---
 document.addEventListener('DOMContentLoaded', function() {
     console.log("Memulai inisialisasi menu burger...");
@@ -1164,6 +1251,79 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
     
+    <!-- Dropdown Menu Script - Fixed version -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("Initializing dropdown menu...");
+        
+        const dropdowns = document.querySelectorAll('.dropdown');
+        
+        dropdowns.forEach(dropdown => {
+            const toggle = dropdown.querySelector('.dropdown-toggle');
+            
+            if (toggle) {
+                // Click event for desktop
+                toggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    console.log("Dropdown toggle clicked");
+                    
+                    // Close other dropdowns
+                    dropdowns.forEach(other => {
+                        if (other !== dropdown) {
+                            other.classList.remove('active');
+                        }
+                    });
+                    
+                    // Toggle current dropdown
+                    dropdown.classList.toggle('active');
+                });
+            }
+            
+            // Handle dropdown menu links
+            const dropdownLinks = dropdown.querySelectorAll('.dropdown-menu a');
+            dropdownLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // Close dropdown when a link is clicked
+                    dropdown.classList.remove('active');
+                    
+                    // Close mobile menu if open
+                    const burger = document.querySelector('.burger');
+                    const navLinks = document.querySelector('.nav-links');
+                    if (burger && navLinks) {
+                        burger.classList.remove('active');
+                        navLinks.classList.remove('active');
+                    }
+                });
+            });
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.dropdown')) {
+                dropdowns.forEach(dropdown => {
+                    dropdown.classList.remove('active');
+                });
+            }
+        });
+        
+        // Handle hover for desktop (optional enhancement)
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        
+        if (!isTouchDevice) {
+            dropdowns.forEach(dropdown => {
+                dropdown.addEventListener('mouseenter', function() {
+                    this.classList.add('active');
+                });
+                
+                dropdown.addEventListener('mouseleave', function() {
+                    this.classList.remove('active');
+                });
+            });
+        }
+    });
+    </script>
 
 </body>
 
